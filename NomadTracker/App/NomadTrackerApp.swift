@@ -1,43 +1,27 @@
 /*
- NomadTrackerApp - Entry Point
- iOS 17+ / macOS 14+
+ NomadTracker - App Entry Point
  */
 
 import SwiftUI
-import WidgetKit
+import CoreData
 
 @main
 struct NomadTrackerApp: App {
+    @StateObject private var stayStore = StayStore()
     @StateObject private var alertManager = AlertManager()
-    @StateObject private var coreDataStack = CoreDataStack()
+    
+    let persistenceController = PersistenceController.shared
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, coreDataStack.container.viewContext)
+                .environmentObject(stayStore)
                 .environmentObject(alertManager)
-                .onAppear {
-                    // Load visa database on first launch
-                    VisaDatabaseLoader.shared.loadIfNeeded(into: coreDataStack.container.viewContext)
-                    // Schedule alerts
-                    alertManager.scheduleAllAlerts()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .task {
+                    // Request notification permission on launch
+                    _ = await alertManager.requestPermission()
                 }
-        }
-        
-        // Widget configuration
-        WidgetExtension {
-            CurrentStayWidget()
-            YearSummaryWidget()
-        }
-    }
-}
-
-// MARK: - Widget Extension Target
-struct WidgetExtension: Scenes {
-    var body: some Scenes {
-        Widget {
-            CurrentStayWidget()
-            YearSummaryWidget()
         }
     }
 }

@@ -1,117 +1,104 @@
 /*
  CountryCardView - Displays visa status for a single country stay
+ Uses Stay type from StayStore (plain Swift struct, not CoreData).
  */
 
 import SwiftUI
 
 struct CountryCardView: View {
-    let stay: Stay  // Core Data NSManagedObject conforming to Stay protocol
+    let stay: Stay
     
-    @State private var expanded = false
+    var countryFlag: String {
+        // Convert ISO country code to regional indicator emoji
+        let code = stay.countryId.uppercased()
+        guard code.count == 2,
+              let c1 = code.unicodeScalars.first,
+              let c2 = code.unicodeScalars.last else {
+            return "🏳️"
+        }
+        let offset = UInt32(c1.value) - 0x41 + 0x1F1E6
+        let offset2 = UInt32(c2.value) - 0x41 + 0x1F1E6
+        return String(UnicodeScalar(offset)!) + String(UnicodeScalar(offset2)!)
+    }
+    
+    var daysRemaining: Int {
+        stay.daysRemaining
+    }
+    
+    var progress: Double {
+        let spent = stay.daysSpent
+        let maxDays = stay.maxAllowedDays
+        return min(1.0, Double(spent) / Double(maxDays))
+    }
+    
+    var statusColor: Color {
+        if daysRemaining <= 3 { return .red }
+        if daysRemaining <= 15 { return .orange }
+        return .green
+    }
     
     var body: some View {
-        VStack(alignment: leading, spacing: 12) {
-            // Header
-            HStack {
-                // Country flag + name
-                HStack(spacing: 12) {
-                    Text(countryFlag)
-                        .font(.title2)
-                    
-                    VStack(alignment: leading) {
-                        Text(stay.countryName)
-                            .font(.headline)
-                        
-                        Text(stay.visaType.displayName)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    // Status indicator
-                    statusBadge
-                }
+        HStack(spacing: 16) {
+            // Flag
+            Text(countryFlag)
+                .font(.system(size: 40))
+            
+            // Info
+            VStack(alignment: .leading, spacing: 4) {
+                Text(stay.countryName)
+                    .font(.headline)
                 
-                // Expand button
-                Button {
-                    withAnimation { expanded.toggle() }
-                } label {
-                    Image(systemName: expanded ? "chevron.up" : "chevron.down")
-                        .foregroundStyle(.secondary)
-                }
+                Text("\(stay.daysSpent) days spent · \(daysRemaining) remaining")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                
+                Text(stay.visaType.displayName)
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
             }
             
-            // Countdown ring
+            Spacer()
+            
+            // Progress Ring
             CountdownRingView(
-                daysSpent: stay.daysSpent,
-                daysRemaining: stay.daysRemaining,
-                maxDays: stay.maxAllowedDays
+                progress: progress,
+                size: 60,
+                color: statusColor
             )
-            .frame(height: 120)
-            
-            // Details (expandable)
-            if expanded {
-                detailsSection
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-            }
+            .overlay(
+                Text("\(daysRemaining)")
+                    .font(.caption2)
+                    .fontWeight(.bold)
+            )
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 10, y: 4)
-    }
-    
-    // MARK: - Country Flag Emoji
-    private var countryFlag: String {
-        let isoCodes = UnicodeScalar(stay.countryId.utf8.map { UnicodeScalar($0 + 0x1F1A5 - 0x41) })
-        return String(isoCodes)
-    }
-    
-    // MARK: - Status Badge
-    private var statusBadge: some View {
-        HStack(spacing: 4) {
-            Circle()
-                .fill(statusColor)
-                .frame(width: 8, height: 8)
-            
-            Text("\(stay.daysRemaining)d")
-                .font(.caption.bold())
-                .foregroundStyle(statusColor)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(statusColor.opacity(0.1))
-        .cornerRadius(8)
-    }
-    
-    // MARK: - Status Color
-    private var statusColor: Color {
-        switch stay.daysRemaining {
-        case ...3: return .red
-        case ...7: return .orange
-        case ...15: return .yellow
-        default: return .green
-        }
-    }
-    
-    // MARK: - Details Section
-    private var detailsSection: some View {
-        VStack(alignment: leading, spacing: 8) {
-            LabeledContent("Entry Date", value: stay.entryDate.formatted(date: .long, time: .omitted))
-            LabeledContent("Days Spent", value: "\(stay.daysSpent)")
-            LabeledContent("Days Remaining", value: "\(stay.daysRemaining)")
-            if let notes = stay.notes {
-                LabeledContent("Notes", value: notes)
-            }
-        }
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
-        .padding(.top, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+        )
     }
 }
 
-// MARK: - Preview
 #Preview {
-    CountryCardView(stay: MockStay.activeStay)
+    VStack(spacing: 16) {
+        CountryCardView(stay: PreviewHelpers.sampleStay)
+    }
+    .padding()
+}
+
+// MARK: - Preview Helpers
+enum PreviewHelpers {
+    static var sampleStay: Stay {
+        Stay(
+            id: UUID(),
+            countryId: "FR",
+            countryName: "France",
+            entryDate: Calendar.current.date(byAdding: .day, value: -15, to: Date())!,
+            exitDate: nil,
+            visaType: .tourist,
+            notes: nil,
+            createdAt: Date()
+        )
+    }
 }

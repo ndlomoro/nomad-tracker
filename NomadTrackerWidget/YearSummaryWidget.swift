@@ -1,15 +1,17 @@
 /*
- YearSummaryWidget - Annual breakdown of days spent per country
+ YearSummaryWidget - Annual breakdown of days spent per country.
+ Uses WidgetProvider for timeline data from App Group shared container.
  */
 
 import WidgetKit
 import SwiftUI
 
+
 struct YearSummaryWidget: Widget {
     let kind: String = "YearSummary"
     
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: YearSummaryProvider()) { entry in
+        StaticConfiguration(kind: kind, provider: YearSummaryWidgetProvider()) { entry in
             YearSummaryWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Year Summary")
@@ -18,74 +20,17 @@ struct YearSummaryWidget: Widget {
     }
 }
 
-// MARK: - Provider
-struct YearSummaryProvider: TimelineProvider {
-    func placeholder(in context: Context) -> YearSummaryEntry {
-        YearSummaryEntry(date: Date(), year: Calendar.current.component(.year, from: Date()), countries: [])
-    }
-    
-    func getSnapshot(in context: Context, completion: @escaping (YearSummaryEntry) -> Void) {
-        let entry = YearSummaryEntry(
-            date: Date(),
-            year: Calendar.current.component(.year, from: Date()),
-            countries: []
-        )
-        completion(entry)
-    }
-    
-    func getTimeline(in context: Context, completion: @escaping (Timeline<YearSummaryEntry>) -> Void) {
-        var entries: [YearSummaryEntry] = []
-        
-        let currentYear = Calendar.current.component(.year, from: Date())
-        let countries = fetchYearSummary(year: currentYear)
-        
-        let entry = YearSummaryEntry(
-            date: Date(),
-            year: currentYear,
-            countries: countries
-        )
-        entries.append(entry)
-        
-        // Update weekly
-        let nextUpdate = Calendar.current.date(
-            byAdding: .day, value: 7,
-            to: Date()
-        ) ?? Date().addingTimeInterval(7 * 86400)
-        
-        completion(Timeline(entries: entries, policy: .after(nextUpdate)))
-    }
-    
-    private func fetchYearSummary(year: Int) -> [YearCountryData] {
-        return []
-    }
-}
-
-// MARK: - Entry
-struct YearSummaryEntry: TimelineEntry {
-    let date: Date
-    let year: Int
-    let countries: [YearCountryData]
-}
-
-// MARK: - Country Data
-struct YearCountryData: Identifiable {
-    let id: UUID
-    let countryName: String
-    let countryCode: String
-    let daysSpent: Int
-    let maxDays: Int
-}
-
 // MARK: - View
+
 struct YearSummaryWidgetEntryView: View {
-    let entry: YearSummaryEntry
+    let entry: YearSummaryWidgetEntry
     
     private var totalDays: Int {
         entry.countries.reduce(0) { $0 + $1.daysSpent }
     }
     
     var body: some View {
-        VStack(alignment: leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
             // Header
             HStack {
                 Image(systemName: "chart.bar.fill")
@@ -134,17 +79,18 @@ struct YearSummaryWidgetEntryView: View {
 }
 
 // MARK: - Country Row
+
 struct YearCountryRow: View {
-    let country: YearCountryData
+    let country: SharedCountryYearData
     
     private var progress: Double {
-        Double(country.daysSpent) / Double(country.maxDays)
+        country.maxDays > 0 ? Double(country.daysSpent) / Double(country.maxDays) : 0
     }
     
     var body: some View {
         HStack(spacing: 12) {
             // Country name
-            VStack(alignment: leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(country.countryName)
                     .font(.subheadline.bold())
                 
@@ -174,16 +120,17 @@ struct YearCountryRow: View {
 }
 
 // MARK: - Preview
+
 #Preview(as: .systemMedium) {
     YearSummaryWidget()
 } timeline: {
-    YearSummaryEntry(
+    YearSummaryWidgetEntry(
         date: Date(),
         year: 2025,
         countries: [
-            YearCountryData(id: UUID(), countryName: "Colombia", countryCode: "CO", daysSpent: 45, maxDays: 90),
-            YearCountryData(id: UUID(), countryName: "Spain", countryCode: "ES", daysSpent: 30, maxDays: 90),
-            YearCountryData(id: UUID(), countryName: "Mexico", countryCode: "MX", daysSpent: 20, maxDays: 180),
+            SharedCountryYearData(id: UUID(), countryName: "Colombia", countryCode: "CO", daysSpent: 45, maxDays: 90),
+            SharedCountryYearData(id: UUID(), countryName: "Spain", countryCode: "ES", daysSpent: 30, maxDays: 90),
+            SharedCountryYearData(id: UUID(), countryName: "Mexico", countryCode: "MX", daysSpent: 20, maxDays: 180),
         ]
     )
 }

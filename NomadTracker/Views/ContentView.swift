@@ -46,4 +46,6 @@ struct ContentView: View {
 // MARK: - Preview
 #Preview {
     ContentView()
+        .environmentObject(StayStore())
+        .environmentObject(AlertManager())
 }

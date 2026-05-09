@@ -1,138 +1,170 @@
 #!/usr/bin/env python3
 """
-Import GPS data from Apple Photos library into Nomad Tracker format.
-Generates JSON stay records from geotagged photos.
-
-Usage:
-    python3 import_photos_data.py > nomad-tracker/Data/photos_import.json
+Import GPS data from Apple Photos into Nomad Tracker stay records.
+Optimized for speed - processes in batches, outputs progress.
 """
 
 import sqlite3
 import json
-from datetime import datetime, timezone
+import sys
+from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
-# Configuration
 PHOTOS_DB = "/Users/ndlomoro/Pictures/Photos Library.photoslibrary/database/Photos.sqlite"
 APPLE_EPOCH = datetime(2001, 1, 1, tzinfo=timezone.utc)
 
 def main():
-    # Connect to Photos database
+    print("📸 Connecting to Photos library...")
     conn = sqlite3.connect(PHOTOS_DB)
     conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    cur = conn.cursor()
     
-    # Query geotagged photos with valid coordinates
-    query = """
-        SELECT 
-            ZLATITUDE,
-            ZLONGITUDE,
-            ZDATECREATED,
-            ZDURATION,
-            ZFILENAME
-        FROM ZASSET 
-        WHERE ZLATITUDE IS NOT NULL 
-          AND ZLONGITUDE IS NOT NULL
-          AND ABS(ZLATITUDE) < 90 
-          AND ABS(ZLONGITUDE) < 180
+    # Get count first
+    cur.execute("""
+        SELECT COUNT(*) FROM ZASSET 
+        WHERE ZLATITUDE IS NOT NULL AND ZLONGITUDE IS NOT NULL
+          AND ABS(ZLATITUDE) < 90 AND ABS(ZLONGITUDE) < 180
           AND ZTRASHEDSTATE = 0
-        ORDER BY ZDATECREATED ASC
-    """
+    """)
+    total = cur.fetchone()[0]
+    print(f"📊 Found {total} geotagged photos")
     
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    print(f"📸 Found {len(rows)} geotagged photos")
+    # Query in batches
+    BATCH = 5000
+    offset = 0
+    all_locations = []
     
-    # Convert timestamps and group by location
-    locations = []
-    for row in rows:
-        timestamp = APPLE_EPOCH + __import__('datetime').timedelta(seconds=row['ZDATECREATED'])
-        locations.append({
-            'lat': round(row['ZLATITUDE'], 2),
-            'lon': round(row['ZLONGITUDE'], 2),
-            'date': timestamp.isoformat(),
-            'timestamp': row['ZDATECREATED']
-        })
+    while offset < total:
+        cur.execute(f"""
+            SELECT ZLATITUDE, ZLONGITUDE, ZDATECREATED
+            FROM ZASSET 
+            WHERE ZLATITUDE IS NOT NULL AND ZLONGITUDE IS NOT NULL
+              AND ABS(ZLATITUDE) < 90 AND ABS(ZLONGITUDE) < 180
+              AND ZTRASHEDSTATE = 0
+            ORDER BY ZDATECREATED ASC
+            LIMIT {BATCH} OFFSET {offset}
+        """)
+        rows = cur.fetchall()
+        if not rows:
+            break
+        
+        for row in rows:
+            ts = APPLE_EPOCH + timedelta(seconds=row['ZDATECREATED'])
+            all_locations.append({
+                'lat': round(row['ZLATITUDE'], 2),
+                'lon': round(row['ZLONGITUDE'], 2),
+                'date': ts,
+            })
+        
+        offset += BATCH
+        print(f"  📥 Batch {offset}/{total}...")
     
-    # Install reverse_geocoder for offline country lookup
+    conn.close()
+    print(f"✅ Loaded {len(all_locations)} locations")
+    
+    # Reverse geocode in batches
+    print("🌍 Geocoding locations...")
     try:
         import reverse_geocoder as rg
     except ImportError:
-        print("⚠️ Installing reverse_geocoder...")
-        import subprocess
-        subprocess.run(['/Users/ndlomoro/anaconda3/bin/pip', 'install', 'reverse_geocoder'], 
-                      capture_output=True)
-        import reverse_geocoder as rg
+        print("❌ Install: pip install reverse_geocoder")
+        sys.exit(1)
     
-    # Group by country and calculate stays
+    # Group by country
     country_timeline = defaultdict(list)
+    geocoded = 0
     
-    for loc in locations:
+    for i in range(0, len(all_locations), 1000):
+        batch = all_locations[i:i+1000]
+        coords = [(loc['lat'], loc['lon']) for loc in batch]
+        
         try:
-            result = rg.search([(loc['lat'], loc['lon'])])[0]
-            country_code = result['cc']
-            city = result['name']
-            country_name = result['country']
-            
-            country_timeline[country_code].append({
-                'date': loc['date'],
-                'city': city,
-                'country_name': country_name
-            })
+            results = rg.search(coords)
+            for loc, result in zip(batch, results):
+                cc = result.get('cc', 'XX')
+                if cc and cc != 'ZZ':
+                    country_timeline[cc].append({
+                        'date': loc['date'],
+                        'city': result.get('name', 'Unknown'),
+                        'country_name': result.get('country', 'Unknown'),
+                    })
+                    geocoded += 1
         except Exception as e:
-            continue
+            print(f"  ⚠️ Batch error: {e}")
+        
+        print(f"  🌍 Geocoded {min(i+1000, len(all_locations))}/{len(all_locations)}...")
     
-    # Calculate continuous stays per country
+    print(f"✅ Geocoded {geocoded} locations to {len(country_timeline)} countries")
+    
+    # Calculate continuous stays
+    print("📅 Calculating stays...")
     stays = []
-    for country_code, entries in sorted(country_timeline.items(), 
-                                        key=lambda x: x[1][0]['date']):
+    GAP_DAYS = 7  # Max gap to consider same stay
+    
+    for cc, entries in sorted(country_timeline.items(), key=lambda x: x[1][0]['date']):
         if not entries:
             continue
         
-        current_stay = {
-            'country_code': country_code,
+        current = {
+            'country_code': cc,
             'country_name': entries[0]['country_name'],
-            'entry_date': entries[0]['date'],
-            'cities': list(set(e['city'] for e in entries[:1]))
+            'entry_date': entries[0]['date'].isoformat(),
+            'cities': list(set([entries[0]['city']])),
         }
         
         for i in range(1, len(entries)):
-            prev_date = datetime.fromisoformat(entries[i-1]['date'])
-            curr_date = datetime.fromisoformat(entries[i]['date'])
-            gap_days = (curr_date - prev_date).days
+            prev = entries[i-1]['date']
+            curr = entries[i]['date']
+            gap = (curr - prev).days
             
-            if gap_days <= 7:  # 7-day gap = same stay
-                current_stay['cities'].append(entries[i]['city'])
+            if gap <= GAP_DAYS:
+                current['cities'].append(entries[i]['city'])
             else:
-                # End current stay, start new one
-                current_stay['exit_date'] = entries[i-1]['date']
-                current_stay['cities'] = list(set(current_stay['cities']))
-                stays.append(current_stay)
-                
-                current_stay = {
-                    'country_code': country_code,
+                # Close current stay
+                current['exit_date'] = prev.isoformat()
+                current['cities'] = list(set(current['cities']))[:5]  # Limit cities
+                stays.append(current)
+                current = {
+                    'country_code': cc,
                     'country_name': entries[i]['country_name'],
-                    'entry_date': entries[i]['date'],
-                    'cities': [entries[i]['city']]
+                    'entry_date': curr.isoformat(),
+                    'cities': [entries[i]['city']],
                 }
         
-        # Close last stay (still active)
-        current_stay['exit_date'] = None
-        current_stay['cities'] = list(set(current_stay['cities']))
-        stays.append(current_stay)
+        # Close last stay (active)
+        current['exit_date'] = None
+        current['cities'] = list(set(current['cities']))[:5]
+        stays.append(current)
     
-    # Generate output
+    # Output
     output = {
         'exported_at': datetime.now(timezone.utc).isoformat(),
         'source': 'Apple Photos Library',
-        'total_photos': len(locations),
+        'total_photos': len(all_locations),
         'countries_visited': len(country_timeline),
-        'stays': stays
+        'total_stays': len(stays),
+        'stays': stays,
     }
     
-    print(json.dumps(output, indent=2, default=str))
+    # Save to file
+    outpath = "/Users/ndlomoro/Documents/Develop/nomad-tracker/Data/photos_import.json"
+    with open(outpath, 'w') as f:
+        json.dump(output, f, indent=2, default=str)
     
-    conn.close()
+    print(f"\n📁 Saved to {outpath}")
+    print(f"📊 Summary:")
+    print(f"   Photos: {len(all_locations)}")
+    print(f"   Countries: {len(country_timeline)}")
+    print(f"   Stays: {len(stays)}")
+    
+    # Print active stays
+    active = [s for s in stays if s['exit_date'] is None]
+    if active:
+        print(f"\n📍 Active stays:")
+        for s in active:
+            entry = datetime.fromisoformat(s['entry_date'])
+            days = (datetime.now(timezone.utc) - entry).days
+            print(f"   🇨🇴 {s['country_name']}: {days} days ({', '.join(s['cities'][:3])})")
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,89 @@
+name: NomadTracker
+options:
+  bundleIdPrefix: com.andeslabs
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+
+targets:
+  NomadTracker:
+    type: application
+    platform: iOS
+    sources:
+      - path: NomadTracker
+        excludes:
+          - "**/*.xcdatamodeld"
+          - "**/*.entitlements"
+      - Shared
+    resources:
+      - NomadTracker/Resources/Assets.xcassets
+      - NomadTracker/Resources/visa_database.json
+      - path: NomadTracker/Resources/NomadTracker.xcdatamodeld
+        type: folder
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.andeslabs.nomadtracker
+        GENERATE_INFOPLIST_FILE: true
+        INFOPLIST_KEY_UILaunchScreen: LaunchScreen
+        INFOPLIST_KEY_LSRequiresIPhoneOS: true
+        INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "We use your location to detect which country you're in."
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "We access your Photos to import GPS-based travel history."
+        INFOPLIST_KEY_NSUserNotificationsUsageDescription: "We send alerts when your visa days are running low."
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: NomadTracker/NomadTracker.entitlements
+
+  NomadTrackerWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: NomadTrackerWidget
+        excludes:
+          - "**/*.entitlements"
+          - "**/*.plist"
+      - Shared
+    resources:
+      - NomadTrackerWidget/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.andeslabs.nomadtracker.NomadTrackerWidget
+        EMBEDDED_CONTENT_CONTAINS_SWIFT: true
+        GENERATE_INFOPLIST_FILE: true
+        INFOPLIST_KEY_NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        CODE_SIGN_ENTITLEMENTS: NomadTrackerWidget/NomadTrackerWidget.entitlements
+    dependencies:
+      - target: NomadTracker
+
+  NomadTrackerIntents:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: NomadTrackerIntents
+        excludes:
+          - "**/*.entitlements"
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.andeslabs.nomadtracker.NomadTrackerIntents
+        EMBEDDED_CONTENT_CONTAINS_SWIFT: true
+        CODE_SIGN_ENTITLEMENTS: NomadTrackerIntents/NomadTrackerIntents.entitlements
+    dependencies:
+      - target: NomadTracker
+
+schemes:
+  NomadTracker:
+    build:
+      targets:
+        NomadTracker: all
+        NomadTrackerWidget: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+    analyze:
+      config: Debug
+    archive:
+      config: Release

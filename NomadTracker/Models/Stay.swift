@@ -25,6 +25,16 @@ struct Stay: Identifiable, Codable {
         return calendar.dateComponents([.day], from: entryDate, to: end).day ?? 0
     }
     
+    // Default max allowed days (90). Override via StayStore.maxAllowedDays(for:)
+    // for country-specific values.
+    var maxAllowedDays: Int {
+        90
+    }
+    
+    var daysRemaining: Int {
+        max(0, maxAllowedDays - daysSpent)
+    }
+    
     var displayEnd: String {
         if let exitDate {
             exitDate.formatted(date: .abbreviated, time: .omitted)

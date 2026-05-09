@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model type="com.apple.IDECoreDataModelerDataModel" documentVersion="1.0" lastSavedToolsVersion="15.4" systemBuildVersion="15E253">
+	<entities>
+		<!-- Stay Entity -->
+		<entity name="Stay" representedClassName="Stay" superentityName="" syncable="YES" codeGenerationType="class" description="" xcmgtype="1">
+			<attribute name="id" attributeName="id" isOptional="NO" attributeType="4" attributeClassName="NSUUID" defaultValue="nil" isImmutable="YES" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="countryId" attributeName="countryId" isOptional="NO" attributeType="4" attributeClassName="NSString" defaultValue="nil" isImmutable="NO" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="countryName" attributeName="countryName" isOptional="NO" attributeType="4" attributeClassName="NSString" defaultValue="nil" isImmutable="NO" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="entryDate" attributeName="entryDate" isOptional="NO" attributeType="12" attributeClassName="NSDate" defaultValue="nil" isImmutable="NO" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="exitDate" attributeName="exitDate" isOptional="YES" attributeType="12" attributeClassName="NSDate" defaultValue="nil" isImmutable="NO" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="visaType" attributeName="visaType" isOptional="NO" attributeType="4" attributeClassName="NSString" defaultValue="&quot;tourist&quot;" isImmutable="NO" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="notes" attributeName="notes" isOptional="YES" attributeType="4" attributeClassName="NSString" defaultValue="nil" isImmutable="NO" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="createdAt" attributeName="createdAt" isOptional="NO" attributeType="12" attributeClassName="NSDate" defaultValue="nil" isImmutable="YES" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="daysSpent" attributeName="daysSpent" isOptional="NO" attributeType="3" attributeClassName="NSNumber" defaultValue="0" isImmutable="NO" usesScalarValueType="YES" description="" xcmgtype="1"/>
+			<attribute name="daysRemaining" attributeName="daysRemaining" isOptional="NO" attributeType="3" attributeClassName="NSNumber" defaultValue="0" isImmutable="NO" usesScalarValueType="YES" description="" xcmgtype="1"/>
+			<attribute name="maxAllowedDays" attributeName="maxAllowedDays" isOptional="NO" attributeType="3" attributeClassName="NSNumber" defaultValue="90" isImmutable="NO" usesScalarValueType="YES" description="" xcmgtype="1"/>
+			<fetchRequest name="activeStays" entity="Stay" predicate="exitDate == nil" sortKey="entryDate" ascending="NO" returnsObjectsAsFaults="YES" includesPendingChanges="YES"/>
+			<fetchRequest name="pastStays" entity="Stay" predicate="exitDate != nil" sortKey="exitDate" ascending="NO" returnsObjectsAsFaults="YES" includesPendingChanges="YES"/>
+		</entity>
+		<!-- Country Entity -->
+		<entity name="Country" representedClassName="Country" superentityName="" syncable="YES" codeGenerationType="class" description="" xcmgtype="1">
+			<attribute name="id" attributeName="id" isOptional="NO" attributeType="4" attributeClassName="NSString" defaultValue="nil" isImmutable="YES" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="name" attributeName="name" isOptional="NO" attributeType="4" attributeClassName="NSString" defaultValue="nil" isImmutable="NO" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="region" attributeName="region" isOptional="YES" attributeType="4" attributeClassName="NSString" defaultValue="nil" isImmutable="NO" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="defaultStayDays" attributeName="defaultStayDays" isOptional="NO" attributeType="3" attributeClassName="NSNumber" defaultValue="90" isImmutable="NO" usesScalarValueType="YES" description="" xcmgtype="1"/>
+			<attribute name="maxExtensionDays" attributeName="maxExtensionDays" isOptional="NO" attributeType="3" attributeClassName="NSNumber" defaultValue="0" isImmutable="NO" usesScalarValueType="YES" description="" xcmgtype="1"/>
+			<attribute name="ruleType" attributeName="ruleType" isOptional="NO" attributeType="4" attributeClassName="NSString" defaultValue="&quot;calendar_year&quot;" isImmutable="NO" usesScalarValueType="NO" description="" xcmgtype="1"/>
+			<attribute name="multipleEntry" attributeName="multipleEntry" isOptional="NO" attributeType="1" attributeClassName="NSNumber" defaultValue="YES" isImmutable="NO" usesScalarValueType="YES" description="" xcmgtype="1"/>
+			<attribute name="visaRequired" attributeName="visaRequired" isOptional="NO" attributeType="1" attributeClassName="NSNumber" defaultValue="NO" isImmutable="NO" usesScalarValueType="YES" description="" xcmgtype="1"/>
+			<attribute name="schengen" attributeName="schengen" isOptional="NO" attributeType="1" attributeClassName="NSNumber" defaultValue="NO" isImmutable="NO" usesScalarValueType="YES" description="" xcmgtype="1"/>
+			<attribute name="notes" attributeName="notes" isOptional="YES" attributeType="4" attributeClassName="NSString" defaultValue="nil" isImmutable="NO" usesScalarValueType="NO" description="" xcmgtype="1"/>
+		</entity>
+	</entities>
+	<children type="w"/>
+</model>

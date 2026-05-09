@@ -5,7 +5,7 @@
 import Foundation
 import UserNotifications
 
-class AlertManager: ObservableObject {
+class AlertManager: NSObject, ObservableObject {
     @Published var activeAlerts: [VisaAlert] = []
     
     private let thresholds = [30, 15, 7, 3, 1]

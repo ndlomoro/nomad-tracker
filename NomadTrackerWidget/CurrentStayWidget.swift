@@ -1,15 +1,22 @@
 /*
- CurrentStayWidget - Home screen widget showing active stays
+ CurrentStayWidget - Home screen widget showing active stays.
+ Uses WidgetProvider for timeline data from App Group shared container.
  */
 
 import WidgetKit
 import SwiftUI
 
+extension Color {
+    static let nomadBlue = Color(red: 0.2, green: 0.5, blue: 0.9)
+    static let nomadBackground = Color(red: 0.97, green: 0.97, blue: 0.98)
+}
+
+
 struct CurrentStayWidget: Widget {
     let kind: String = "CurrentStay"
     
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+        StaticConfiguration(kind: kind, provider: CurrentStayProvider()) { entry in
             CurrentStayWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Current Stay")
@@ -22,74 +29,13 @@ struct CurrentStayWidget: Widget {
     }
 }
 
-// MARK: - Provider
-struct Provider: TimelineProvider {
-    func placeholder(in context: Context) -> WidgetEntry {
-        WidgetEntry(date: Date(), stays: [], summary: "Loading...")
-    }
-    
-    func getSnapshot(in context: Context, completion: @escaping (WidgetEntry) -> Void) {
-        let entry = WidgetEntry(date: Date(), stays: [], summary: "Snapshot")
-        completion(entry)
-    }
-    
-    func getTimeline(in context: Context, completion: @escaping (Timeline<WidgetEntry>) -> Void) {
-        var entries: [WidgetEntry] = []
-        
-        // Fetch from Core Data via App Group
-        let stays = fetchActiveStays()
-        let summary = generateSummary(stays: stays)
-        
-        let entry = WidgetEntry(date: Date(), stays: stays, summary: summary)
-        entries.append(entry)
-        
-        // Next update at midnight
-        let nextMidnight = Calendar.current.date(
-            byAdding: .day, value: 1,
-            to: Calendar.current.startOfDay(for: Date())
-        ) ?? Date().addingTimeInterval(86400)
-        
-        let timeline = Timeline(
-            entries: entries,
-            policy: .after(nextMidnight)
-        )
-        completion(timeline)
-    }
-    
-    private func fetchActiveStays() -> [WidgetStayData] {
-        // Fetch from Core Data shared container
-        return []
-    }
-    
-    private func generateSummary(stays: [WidgetStayData]) -> String {
-        guard !stays.isEmpty else { return "No active stays" }
-        return "\(stays.count) active stay\(stays.count > 1 ? "s" : "")"
-    }
-}
-
-// MARK: - Entry
-struct WidgetEntry: TimelineEntry {
-    let date: Date
-    let stays: [WidgetStayData]
-    let summary: String
-}
-
-// MARK: - Widget Stay Data
-struct WidgetStayData: Identifiable {
-    let id: UUID
-    let countryName: String
-    let countryCode: String
-    let daysSpent: Int
-    let daysRemaining: Int
-    let maxDays: Int
-}
-
 // MARK: - View
+
 struct CurrentStayWidgetEntryView: View {
-    let entry: WidgetEntry
+    let entry: CurrentStayWidgetEntry
     
     var body: some View {
-        VStack(alignment: leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 8) {
             // Header
             HStack {
                 Image(systemName: "globe.americas.fill")
@@ -131,11 +77,12 @@ struct CurrentStayWidgetEntryView: View {
 }
 
 // MARK: - Stay Row
+
 struct WidgetStayRow: View {
-    let stay: WidgetStayData
+    let stay: SharedStayData
     
     private var progress: Double {
-        Double(stay.daysSpent) / Double(stay.maxDays)
+        stay.progress
     }
     
     private var statusColor: Color {
@@ -169,7 +116,7 @@ struct WidgetStayRow: View {
                 }
             
             // Country info
-            VStack(alignment: leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(stay.countryName)
                     .font(.subheadline.bold())
                 
@@ -184,27 +131,36 @@ struct WidgetStayRow: View {
 }
 
 // MARK: - Preview
+
 #Preview(as: .systemSmall) {
     CurrentStayWidget()
 } timeline: {
-    WidgetEntry(
+    CurrentStayWidgetEntry(
         date: Date(),
         stays: [
-            WidgetStayData(
+            SharedStayData(
                 id: UUID(),
                 countryName: "Colombia",
                 countryCode: "CO",
                 daysSpent: 45,
                 daysRemaining: 45,
-                maxDays: 90
+                maxDays: 90,
+                entryDate: Date().addingTimeInterval(-45 * 86400),
+                exitDate: nil,
+                visaType: "tourist",
+                notes: nil
             ),
-            WidgetStayData(
+            SharedStayData(
                 id: UUID(),
                 countryName: "Spain",
                 countryCode: "ES",
                 daysSpent: 78,
                 daysRemaining: 12,
-                maxDays: 90
+                maxDays: 90,
+                entryDate: Date().addingTimeInterval(-78 * 86400),
+                exitDate: nil,
+                visaType: "tourist",
+                notes: nil
             )
         ],
         summary: "2 active stays"

@@ -148,8 +148,18 @@ class VisaCalculator {
             
             if entryYear == year || exitYear == year || (entryYear < year && exitYear > year) {
                 // Calculate days within this specific year
-                let yearStart = calendar.date(from: calendar.dateComponents([.year: year, .month: 1, .day: 1]))!
-                let yearEnd = calendar.date(byAdding: .day, value: -1, to: calendar.date(from: calendar.dateComponents([.year: year + 1, .month: 1, .day: 1]))!)!
+                var yearStartComponents = DateComponents()
+                yearStartComponents.year = year
+                yearStartComponents.month = 1
+                yearStartComponents.day = 1
+                guard let yearStart = calendar.date(from: yearStartComponents) else { continue }
+                
+                var yearEndComponents = DateComponents()
+                yearEndComponents.year = year + 1
+                yearEndComponents.month = 1
+                yearEndComponents.day = 1
+                guard let yearEndBase = calendar.date(from: yearEndComponents) else { continue }
+                let yearEnd = calendar.date(byAdding: .day, value: -1, to: yearEndBase)!
                 
                 let effectiveEntry = max(stay.entryDate, yearStart)
                 let effectiveExit = min(stay.exitDate ?? Date(), yearEnd)

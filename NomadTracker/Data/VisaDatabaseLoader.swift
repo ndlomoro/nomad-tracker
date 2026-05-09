@@ -45,16 +45,16 @@ class VisaDatabaseLoader {
                 guard let code = countryDict["code"] as? String,
                       let name = countryDict["name"] as? String else { continue }
                 
-                let country = Country(context: context)
+                let country = CountryManagedObject(context: context)
                 country.id = code
                 country.name = name
                 country.region = countryDict["region"] as? String ?? "Unknown"
-                country.defaultStayDays = countryDict["default_stay_days"] as? Int ?? 90
-                country.maxExtensionDays = countryDict["max_extension_days"] as? Int ?? 0
+                country.defaultStayDays = Int16(countryDict["default_stay_days"] as? Int ?? 90)
+                country.maxExtensionDays = Int16(countryDict["max_extension_days"] as? Int ?? 0)
                 country.ruleType = countryDict["rule_type"] as? String ?? "calendar_year"
                 country.multipleEntry = countryDict["multiple_entry"] as? Bool ?? true
                 country.visaRequired = countryDict["visa_required"] as? Bool ?? false
-                country.isSchengen = countryDict["schengen"] as? Bool ?? false
+                country.schengen = countryDict["schengen"] as? Bool ?? false
                 country.notes = countryDict["notes"] as? String
             }
             
