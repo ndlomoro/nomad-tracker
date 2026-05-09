@@ -1,0 +1,1989 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-05-09",
+  "note": "Stay limits are for standard tourist entry without special visa. Actual limits depend on passport nationality. Database uses US/Canadian/EU passport as default — customize per user.",
+  "countries": [
+    {
+      "code": "AR",
+      "name": "Argentina",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 90,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 180,
+        "renewable": true,
+        "name": "Remote Worker Visa"
+      },
+      "notes": "90 days per 12-month period. Can extend 90 more at migraciones.gob.ar. Popular for South American nomads."
+    },
+    {
+      "code": "AU",
+      "name": "Australia",
+      "region": "Oceania",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "eVisitor (subclass 651) / e-WAS (subclass 652)",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "eVisitor free for EU/UK citizens. 3 months stay per 12-month period."
+    },
+    {
+      "code": "AT",
+      "name": "Austria",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Schengen area. 90 days in any 180-day rolling window across ALL Schengen countries combined."
+    },
+    {
+      "code": "BE",
+      "name": "Belgium",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "BO",
+      "name": "Bolivia",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 90,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days, renewable for another 90. Tourist card required on entry."
+    },
+    {
+      "code": "BR",
+      "name": "Brazil",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 90,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 180,
+        "renewable": true,
+        "name": "Visto de Trabalho Temporário (Remote)"
+      },
+      "notes": "90 days extendable to 180. New digital nomad visa announced 2024."
+    },
+    {
+      "code": "CA",
+      "name": "Canada",
+      "region": "North America",
+      "default_stay_days": 90,
+      "max_extension_days": 180,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "eTA (Electronic Travel Authorization)",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "eTA required for visa-exempt nationals. Up to 6 months stay possible at border discretion."
+    },
+    {
+      "code": "CH",
+      "name": "Switzerland",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area. 90/180 rolling rule applies."
+    },
+    {
+      "code": "CL",
+      "name": "Chile",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 90,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 180,
+        "renewable": true,
+        "name": "Remote Worker Visa"
+      },
+      "notes": "90 days, renewable. Digital nomad visa available since 2024."
+    },
+    {
+      "code": "CO",
+      "name": "Colombia",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 90,
+      "rule_type": "rolling_window",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Nomad Digital Visa (VTN)"
+      },
+      "notes": "90 days per 180-day period. Can extend 90 more. Excellent digital nomad visa (1 year)."
+    },
+    {
+      "code": "CR",
+      "name": "Costa Rica",
+      "region": "Central America",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Digital Nomad Visa (Rentista)"
+      },
+      "notes": "90 days tourist. 'Remote Worker' visa for up to 1 year available."
+    },
+    {
+      "code": "CY",
+      "name": "Cyprus",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Fast Track Residence Permit"
+      },
+      "notes": "Not yet in Schengen but follows 90/180. Popular digital nomad destination."
+    },
+    {
+      "code": "CZ",
+      "name": "Czech Republic",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "DE",
+      "name": "Germany",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Schengen area. Freelancer visa possible but not true nomad visa."
+    },
+    {
+      "code": "DK",
+      "name": "Denmark",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "EC",
+      "name": "Ecuador",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 90,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Digital Nomad Visa"
+      },
+      "notes": "90 days tourist, renewable. Digital nomad visa since 2024."
+    },
+    {
+      "code": "EE",
+      "name": "Estonia",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "e-Residency + Digital Nomad Visa"
+      },
+      "notes": "Schengen. First country to launch dedicated digital nomad visa (2020)."
+    },
+    {
+      "code": "ES",
+      "name": "Spain",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Digital Nomad Visa (Ley de Startups)"
+      },
+      "notes": "Schengen. DNV available since 2023. Very popular for nomads."
+    },
+    {
+      "code": "FI",
+      "name": "Finland",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "FR",
+      "name": "France",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "GB",
+      "name": "United Kingdom",
+      "region": "Europe",
+      "default_stay_days": 180,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Up to 6 months as Standard Visitor. No digital nomad visa."
+    },
+    {
+      "code": "GR",
+      "name": "Greece",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Digital Nomad Visa"
+      },
+      "notes": "Schengen. DNV available. 90/180 rule for tourists."
+    },
+    {
+      "code": "GT",
+      "name": "Guatemala",
+      "region": "Central America",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days. Part of CA-4 agreement with Honduras, El Salvador, Nicaragua — shared 90 days."
+    },
+    {
+      "code": "HK",
+      "name": "Hong Kong",
+      "region": "Asia",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days for US/Canadian/EU passports. No digital nomad visa."
+    },
+    {
+      "code": "HR",
+      "name": "Croatia",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Temporary Stay for Remote Workers"
+      },
+      "notes": "Schengen since 2023. DNV available."
+    },
+    {
+      "code": "HU",
+      "name": "Hungary",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "IE",
+      "name": "Ireland",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Immigration Investor Programme / Critical Skills"
+      },
+      "notes": "Not Schengen. 90 days tourist. Long-stay options available."
+    },
+    {
+      "code": "IS",
+      "name": "Iceland",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "IT",
+      "name": "Italy",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Electrical Residence Permit (Elective Residence)"
+      },
+      "notes": "Schengen. Digital nomad visa pilot program."
+    },
+    {
+      "code": "JP",
+      "name": "Japan",
+      "region": "Asia",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 180,
+        "renewable": false,
+        "name": "Digital Nomad Visa (Special Status of Residence)"
+      },
+      "notes": "90 days visa-free for US/Canada/EU. New DNV launched April 2024."
+    },
+    {
+      "code": "KR",
+      "name": "South Korea",
+      "region": "Asia",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "D-8-1 Digital Nomad Visa"
+      },
+      "notes": "90 days visa-free. DNV available since 2024."
+    },
+    {
+      "code": "LI",
+      "name": "Liechtenstein",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "LT",
+      "name": "Lithuania",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "LU",
+      "name": "Luxembourg",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "LV",
+      "name": "Latvia",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "MC",
+      "name": "Monaco",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": false,
+      "notes": "Not Schengen but follows same 90/180 rule as Schengen."
+    },
+    {
+      "code": "MT",
+      "name": "Malta",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Nomad Residence Permit"
+      },
+      "notes": "Schengen. One of the first DNV programs (2020)."
+    },
+    {
+      "code": "MX",
+      "name": "Mexico",
+      "region": "North America",
+      "default_stay_days": 180,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Temporary Resident Visa"
+      },
+      "notes": "Up to 180 days tourist. Temporary residency popular with nomads."
+    },
+    {
+      "code": "NL",
+      "name": "Netherlands",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "NO",
+      "name": "Norway",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "NZ",
+      "name": "New Zealand",
+      "region": "Oceania",
+      "default_stay_days": 180,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "NZeTA",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "NZeTA required. Up to 6 months for US citizens, 3 months for others."
+    },
+    {
+      "code": "PA",
+      "name": "Panama",
+      "region": "Central America",
+      "default_stay_days": 180,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Friendly Nations Visa / Remote Worker Permit"
+      },
+      "notes": "180 days tourist. Excellent nomad programs."
+    },
+    {
+      "code": "PE",
+      "name": "Peru",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Up to 184 days possible (depends on immigration officer). No official DNV."
+    },
+    {
+      "code": "PH",
+      "name": "Philippines",
+      "region": "Asia",
+      "default_stay_days": 30,
+      "max_extension_days": 60,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Special Digital Nomad Visa (SDNV)"
+      },
+      "notes": "30 days initial, extendable to 36 months. SDNV launched 2024."
+    },
+    {
+      "code": "PL",
+      "name": "Poland",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "PT",
+      "name": "Portugal",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "D8 Digital Nomad Visa"
+      },
+      "notes": "Schengen. D8 visa very popular. Can lead to residency."
+    },
+    {
+      "code": "RO",
+      "name": "Romania",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen since March 2024 (partial — land/border not yet)."
+    },
+    {
+      "code": "RS",
+      "name": "Serbia",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Workation Visa"
+      },
+      "notes": "90 days visa-free. Workation visa available."
+    },
+    {
+      "code": "SE",
+      "name": "Sweden",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "SG",
+      "name": "Singapore",
+      "region": "Asia",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Global Business Mobility Pass / Digital Nomad Pass"
+      },
+      "notes": "90 days visa-free. Digital Nomad Pass launched 2023."
+    },
+    {
+      "code": "SI",
+      "name": "Slovenia",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "SK",
+      "name": "Slovakia",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen area."
+    },
+    {
+      "code": "TH",
+      "name": "Thailand",
+      "region": "Asia",
+      "default_stay_days": 60,
+      "max_extension_days": 60,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Destination Thailand Visa (DTV)"
+      },
+      "notes": "60 days visa-exempt + 60 extension. DTV launched 2024 — 5 years stay possible."
+    },
+    {
+      "code": "TR",
+      "name": "Turkey",
+      "region": "Asia/Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa required for most. 90 days in any 180-day period."
+    },
+    {
+      "code": "TW",
+      "name": "Taiwan",
+      "region": "Asia",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free for US/Canada. Extension possible."
+    },
+    {
+      "code": "TZ",
+      "name": "Tanzania",
+      "region": "Africa",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Visa on Arrival / e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Visa on arrival available. 90 days."
+    },
+    {
+      "code": "UA",
+      "name": "Ukraine",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Freelancer Visa (D3)"
+      },
+      "notes": "90/180 rule. Freelancer visa available."
+    },
+    {
+      "code": "US",
+      "name": "United States",
+      "region": "North America",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "ESTA (Visa Waiver Program)",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "ESTA required for VWP countries. 90 days B1/B2. No digital nomad visa."
+    },
+    {
+      "code": "UY",
+      "name": "Uruguay",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 90,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Rentista Visa"
+      },
+      "notes": "90 days, renewable. Rentista visa for long stays."
+    },
+    {
+      "code": "VN",
+      "name": "Vietnam",
+      "region": "Asia",
+      "default_stay_days": 45,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa up to 90 days since 2023. Visa-free 45 days for some nationalities."
+    },
+    {
+      "code": "ZA",
+      "name": "South Africa",
+      "region": "Africa",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free for most Western passports."
+    },
+    {
+      "code": "CY",
+      "name": "Cyprus",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Fast Track Residence Permit"
+      },
+      "notes": "Not yet Schengen but follows 90/180. Popular for nomads."
+    },
+    {
+      "code": "MY",
+      "name": "Malaysia",
+      "region": "Asia",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "DE Rantau Nomad Pass"
+      },
+      "notes": "90 days visa-free. DE Rantau pass for 1 year."
+    },
+    {
+      "code": "ID",
+      "name": "Indonesia",
+      "region": "Asia",
+      "default_stay_days": 30,
+      "max_extension_days": 30,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Digital Nomad Visa (KITAS)"
+      },
+      "notes": "30 days visa-free, extendable once. KITAS nomad visa available."
+    },
+    {
+      "code": "IN",
+      "name": "India",
+      "region": "Asia",
+      "default_stay_days": 0,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa (Tourist/Business)",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa required. Up to 90 days for tourist e-Visa."
+    },
+    {
+      "code": "QA",
+      "name": "Qatar",
+      "region": "Middle East",
+      "default_stay_days": 30,
+      "max_extension_days": 30,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Nomad Visa"
+      },
+      "notes": "30 days visa-free, extendable. Nomad visa since 2017."
+    },
+    {
+      "code": "AE",
+      "name": "United Arab Emirates",
+      "region": "Middle East",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Virtual Work Visa"
+      },
+      "notes": "90 days visa-free for many. Virtual Work Permit for 1 year."
+    },
+    {
+      "code": "SA",
+      "name": "Saudi Arabia",
+      "region": "Middle East",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa available for tourism. 90 days."
+    },
+    {
+      "code": "BG",
+      "name": "Bulgaria",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": true,
+      "notes": "Schengen since 2024 (partial)."
+    },
+    {
+      "code": "MK",
+      "name": "North Macedonia",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free for Western passports."
+    },
+    {
+      "code": "AL",
+      "name": "Albania",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free. Growing nomad destination."
+    },
+    {
+      "code": "ME",
+      "name": "Montenegro",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free."
+    },
+    {
+      "code": "BA",
+      "name": "Bosnia and Herzegovina",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free."
+    },
+    {
+      "code": "GE",
+      "name": "Georgia",
+      "region": "Asia/Europe",
+      "default_stay_days": 365,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Digital Nomad Permit"
+      },
+      "notes": "365 days visa-free for most Western passports! Most nomad-friendly country."
+    },
+    {
+      "code": "AM",
+      "name": "Armenia",
+      "region": "Asia/Europe",
+      "default_stay_days": 180,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "180 days visa-free for US/EU citizens."
+    },
+    {
+      "code": "AZ",
+      "name": "Azerbaijan",
+      "region": "Asia/Europe",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa required. 30 days."
+    },
+    {
+      "code": "IL",
+      "name": "Israel",
+      "region": "Middle East",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free for Western passports."
+    },
+    {
+      "code": "JO",
+      "name": "Jordan",
+      "region": "Middle East",
+      "default_stay_days": 30,
+      "max_extension_days": 365,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Visa on Arrival",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Visa on arrival. Extendable."
+    },
+    {
+      "code": "EG",
+      "name": "Egypt",
+      "region": "Africa",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa / Visa on Arrival",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa or visa on arrival. 30 days."
+    },
+    {
+      "code": "MA",
+      "name": "Morocco",
+      "region": "Africa",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free."
+    },
+    {
+      "code": "TN",
+      "name": "Tunisia",
+      "region": "Africa",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "30 days visa-free for Western passports."
+    },
+    {
+      "code": "KE",
+      "name": "Kenya",
+      "region": "Africa",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "eTA (Electronic Travel Authorization)",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "eTA required since 2024. 90 days."
+    },
+    {
+      "code": "MZ",
+      "name": "Mozambique",
+      "region": "Africa",
+      "default_stay_days": 30,
+      "max_extension_days": 60,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Visa on Arrival",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Visa on arrival. Extendable."
+    },
+    {
+      "code": "SN",
+      "name": "Senegal",
+      "region": "Africa",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free for many Western passports."
+    },
+    {
+      "code": "GH",
+      "name": "Ghana",
+      "region": "Africa",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa required. 30 days."
+    },
+    {
+      "code": "NG",
+      "name": "Nigeria",
+      "region": "Africa",
+      "default_stay_days": 0,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Tourist Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Visa required. No visa-free entry."
+    },
+    {
+      "code": "CM",
+      "name": "Cameroon",
+      "region": "Africa",
+      "default_stay_days": 0,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa required."
+    },
+    {
+      "code": "CI",
+      "name": "Côte d'Ivoire",
+      "region": "Africa",
+      "default_stay_days": 0,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa required."
+    },
+    {
+      "code": "MG",
+      "name": "Madagascar",
+      "region": "Africa",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Visa on Arrival",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Visa on arrival available."
+    },
+    {
+      "code": "MV",
+      "name": "Maldives",
+      "region": "Asia",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Remote Worker Visa"
+      },
+      "notes": "30 days free on arrival. Remote worker visa available."
+    },
+    {
+      "code": "NP",
+      "name": "Nepal",
+      "region": "Asia",
+      "default_stay_days": 0,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Tourist Visa on Arrival",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Tourist visa on arrival. Up to 90 days possible."
+    },
+    {
+      "code": "LK",
+      "name": "Sri Lanka",
+      "region": "Asia",
+      "default_stay_days": 30,
+      "max_extension_days": 30,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "ETA (Electronic Travel Authorization)",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "ETA required. 30 days, extendable."
+    },
+    {
+      "code": "BD",
+      "name": "Bangladesh",
+      "region": "Asia",
+      "default_stay_days": 0,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa / Visa on Arrival",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Visa required."
+    },
+    {
+      "code": "PK",
+      "name": "Pakistan",
+      "region": "Asia",
+      "default_stay_days": 0,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa required."
+    },
+    {
+      "code": "MM",
+      "name": "Myanmar",
+      "region": "Asia",
+      "default_stay_days": 0,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa available but travel advisory in effect."
+    },
+    {
+      "code": "KH",
+      "name": "Cambodia",
+      "region": "Asia",
+      "default_stay_days": 30,
+      "max_extension_days": 30,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "e-Visa / Visa on Arrival",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "e-Visa or visa on arrival. 30 days."
+    },
+    {
+      "code": "LA",
+      "name": "Laos",
+      "region": "Asia",
+      "default_stay_days": 30,
+      "max_extension_days": 30,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Visa on Arrival / e-Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Visa on arrival. 30 days."
+    },
+    {
+      "code": "BN",
+      "name": "Brunei",
+      "region": "Asia",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free for Western passports."
+    },
+    {
+      "code": "BT",
+      "name": "Bhutan",
+      "region": "Asia",
+      "default_stay_days": 0,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Tourist Visa (Daily Fee)",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Tourism fee required. No visa-free entry."
+    },
+    {
+      "code": "FJ",
+      "name": "Fiji",
+      "region": "Oceania",
+      "default_stay_days": 120,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "120 days visa-free."
+    },
+    {
+      "code": "PG",
+      "name": "Papua New Guinea",
+      "region": "Oceania",
+      "default_stay_days": 60,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Visa on Arrival",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Visa on arrival. 60 days."
+    },
+    {
+      "code": "SB",
+      "name": "Solomon Islands",
+      "region": "Oceania",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free."
+    },
+    {
+      "code": "NC",
+      "name": "New Caledonia",
+      "region": "Oceania",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "French Overseas Territory Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "French territory. Schengen visa may apply."
+    },
+    {
+      "code": "PF",
+      "name": "French Polynesia",
+      "region": "Oceania",
+      "default_stay_days": 89,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "89 days visa-free for Western passports."
+    },
+    {
+      "code": "CK",
+      "name": "Cook Islands",
+      "region": "Oceania",
+      "default_stay_days": 31,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "31 days visa-free."
+    },
+    {
+      "code": "WS",
+      "name": "Samoa",
+      "region": "Oceania",
+      "default_stay_days": 60,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "60 days visa-free."
+    },
+    {
+      "code": "TO",
+      "name": "Tonga",
+      "region": "Oceania",
+      "default_stay_days": 31,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "31 days visa-free."
+    },
+    {
+      "code": "VU",
+      "name": "Vanuatu",
+      "region": "Oceania",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "30 days visa-free."
+    },
+    {
+      "code": "GY",
+      "name": "Guyana",
+      "region": "South America",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "30 days visa-free."
+    },
+    {
+      "code": "SR",
+      "name": "Suriname",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free."
+    },
+    {
+      "code": "PY",
+      "name": "Paraguay",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 90,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days, renewable for another 90."
+    },
+    {
+      "code": "VE",
+      "name": "Venezuela",
+      "region": "South America",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days visa-free. Travel advisory."
+    },
+    {
+      "code": "NI",
+      "name": "Nicaragua",
+      "region": "Central America",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days. Part of CA-4 agreement."
+    },
+    {
+      "code": "HN",
+      "name": "Honduras",
+      "region": "Central America",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days. Part of CA-4 agreement."
+    },
+    {
+      "code": "SV",
+      "name": "El Salvador",
+      "region": "Central America",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "90 days. Part of CA-4 agreement."
+    },
+    {
+      "code": "BZ",
+      "name": "Belize",
+      "region": "Central America",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "30 days visa-free."
+    },
+    {
+      "code": "CU",
+      "name": "Cuba",
+      "region": "Caribbean",
+      "default_stay_days": 30,
+      "max_extension_days": 30,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Tourist Card",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Tourist card required. 30 days, extendable."
+    },
+    {
+      "code": "JM",
+      "name": "Jamaica",
+      "region": "Caribbean",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "30 days visa-free."
+    },
+    {
+      "code": "TT",
+      "name": "Trinidad and Tobago",
+      "region": "Caribbean",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "30 days visa-free."
+    },
+    {
+      "code": "BS",
+      "name": "Bahamas",
+      "region": "Caribbean",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Beach Welcome Program"
+      },
+      "notes": "30 days visa-free. Beach Welcome remote worker program."
+    },
+    {
+      "code": "BB",
+      "name": "Barbados",
+      "region": "Caribbean",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Welcome Stamp"
+      },
+      "notes": "30 days visa-free. Welcome Stamp for up to 1 year."
+    },
+    {
+      "code": "DM",
+      "name": "Dominica",
+      "region": "Caribbean",
+      "default_stay_days": 21,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Dominica Nomad Digital Nomad Visa"
+      },
+      "notes": "21 days visa-free. DNDNV for 1 year."
+    },
+    {
+      "code": "LC",
+      "name": "Saint Lucia",
+      "region": "Caribbean",
+      "default_stay_days": 42,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Nomad Digital Nomad Visa"
+      },
+      "notes": "42 days visa-free. DNDNV available."
+    },
+    {
+      "code": "GD",
+      "name": "Grenada",
+      "region": "Caribbean",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "30 days visa-free."
+    },
+    {
+      "code": "VC",
+      "name": "Saint Vincent and the Grenadines",
+      "region": "Caribbean",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Nomad Digital Nomad Visa"
+      },
+      "notes": "30 days visa-free. DNDNV available."
+    },
+    {
+      "code": "KN",
+      "name": "Saint Kitts and Nevis",
+      "region": "Caribbean",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "30 days visa-free."
+    },
+    {
+      "code": "AG",
+      "name": "Antigua and Barbuda",
+      "region": "Caribbean",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": false,
+        "name": "Antigua & Barbuda Nomad"
+      },
+      "notes": "30 days visa-free. Nomad program available."
+    },
+    {
+      "code": "MP",
+      "name": "Northern Mariana Islands",
+      "region": "Oceania",
+      "default_stay_days": 45,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "45 days visa-free."
+    },
+    {
+      "code": "GU",
+      "name": "Guam",
+      "region": "Oceania",
+      "default_stay_days": 45,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "45 days visa-free. US territory."
+    },
+    {
+      "code": "RU",
+      "name": "Russia",
+      "region": "Europe/Asia",
+      "default_stay_days": 0,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": true,
+      "visa_type": "Tourist/Business Visa",
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "Visa required. Travel advisory in effect."
+    },
+    {
+      "code": "UA",
+      "name": "Ukraine",
+      "region": "Europe",
+      "default_stay_days": 90,
+      "max_extension_days": 0,
+      "rule_type": "rolling_90_180",
+      "multiple_entry": true,
+      "visa_required": false,
+      "schengen": false,
+      "digital_nomad_visa": {
+        "available": true,
+        "duration_days": 365,
+        "renewable": true,
+        "name": "Freelancer Visa (D3)"
+      },
+      "notes": "90/180 rule. Freelancer visa available."
+    },
+    {
+      "code": "BY",
+      "name": "Belarus",
+      "region": "Europe",
+      "default_stay_days": 30,
+      "max_extension_days": 0,
+      "rule_type": "calendar_year",
+      "multiple_entry": true,
+      "visa_required": false,
+      "digital_nomad_visa": {
+        "available": false
+      },
+      "notes": "30 days visa-free for Western passports."
+    }
+  ],
+  "rule_types": {
+    "calendar_year": "Days counted within a single calendar year (Jan 1 - Dec 31). Resets each January.",
+    "rolling_90_180": "Schengen-style: maximum 90 days in any rolling 180-day window. Moving window, not calendar year.",
+    "rolling_window": "Custom rolling window — check country-specific rules for exact period."
+  },
+  "alert_thresholds": {
+    "warning_days": [30, 15, 7, 3, 1],
+    "warning_labels": {
+      "30": "🟡 30 days remaining",
+      "15": "🟠 15 days remaining",
+      "7": "🔴 7 days — plan exit",
+      "3": "🚨 3 days — urgent",
+      "1": "⚠️ LAST DAY"
+    }
+  }
+}
