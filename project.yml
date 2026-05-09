@@ -12,7 +12,8 @@ settings:
 targets:
   NomadTracker:
     type: application
-    platform: iOS
+    platform: macOS
+    deploymentTarget: "14.0"
     sources:
       - path: NomadTracker
         excludes:

@@ -31,7 +31,7 @@ struct StayTrackerView: View {
             }
             .navigationTitle("Track Stays")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .automatic) {
                     Button {
                         showAddStaySheet = true
                     } label: {
@@ -93,7 +93,7 @@ struct StayTrackerView: View {
                 .buttonStyle(.plain)
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
     }
     
     // MARK: - Active Stay Row

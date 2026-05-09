@@ -36,7 +36,7 @@ struct AlertsView: View {
                 .padding()
             }
             .navigationTitle("Alerts")
-            .navigationBarTitleDisplayMode(.inline)
+            
             .background(Color.nomadBackground)
             .onAppear {
                 checkNotificationPermission()
@@ -86,7 +86,7 @@ struct AlertsView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color.white)
         .cornerRadius(16)
         .shadow(color: .black.opacity(0.04), radius: 8, y: 4)
     }
@@ -121,7 +121,7 @@ struct AlertsView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color.white)
         .cornerRadius(16)
         .shadow(color: .black.opacity(0.04), radius: 8, y: 4)
     }
@@ -164,7 +164,7 @@ struct AlertsView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color.white)
         .cornerRadius(16)
         .shadow(color: .black.opacity(0.04), radius: 8, y: 4)
     }
@@ -196,12 +196,16 @@ struct AlertsView: View {
     }
     
     private func checkNotificationPermission() {
+#if os(iOS)
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
                 hasPermission = settings.authorizationStatus == .authorized ||
                                settings.authorizationStatus == .provisional
             }
         }
+#else
+        hasPermission = true
+#endif
     }
     
     private func requestNotificationPermission() {
@@ -357,7 +361,7 @@ struct ActiveAlertCard: View {
             }
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(Color.gray.opacity(0.1))
         .cornerRadius(12)
     }
     

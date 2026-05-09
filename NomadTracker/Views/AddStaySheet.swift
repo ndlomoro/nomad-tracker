@@ -52,7 +52,7 @@ struct AddStaySheet: View {
                 notesSection
             }
             .navigationTitle(editStay != nil ? "Edit Stay" : "New Stay")
-            .navigationBarTitleDisplayMode(.inline)
+            
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
@@ -166,7 +166,7 @@ struct AddStaySheet: View {
                         .tag(type)
                 }
             }
-            .pickerStyle(.wheel)
+            
         }
     }
     

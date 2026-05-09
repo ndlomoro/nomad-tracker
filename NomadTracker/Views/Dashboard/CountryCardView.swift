@@ -74,7 +74,7 @@ struct CountryCardView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.white)
                 .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
         )
     }

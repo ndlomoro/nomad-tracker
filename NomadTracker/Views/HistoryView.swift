@@ -28,9 +28,9 @@ struct HistoryView: View {
                 }
             }
             .navigationTitle("History")
-            .navigationBarTitleDisplayMode(.inline)
+            
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .automatic) {
                     Picker("Year", selection: $selectedYear) {
                         ForEach(availableYears.reversed(), id: \.self) { year in
                             Text("\(year)")
@@ -95,7 +95,7 @@ struct HistoryView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color.white)
         .cornerRadius(16)
         .shadow(color: .black.opacity(0.04), radius: 8, y: 4)
     }
@@ -119,7 +119,7 @@ struct HistoryView: View {
                     }
                 }
                 .padding()
-                .background(Color(.systemBackground))
+                .background(Color.white)
                 .cornerRadius(16)
                 .shadow(color: .black.opacity(0.04), radius: 8, y: 4)
             }
@@ -393,7 +393,7 @@ struct YearGroupCard: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color.white)
         .cornerRadius(16)
         .shadow(color: .black.opacity(0.04), radius: 8, y: 4)
     }

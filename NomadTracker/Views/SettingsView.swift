@@ -33,7 +33,6 @@ struct SettingsView: View {
                 aboutSection
             }
             .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.large)
             .alert("Export Successful", isPresented: $exportSuccess) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -109,7 +108,7 @@ struct SettingsView: View {
             }
             
             TextField("Country code (e.g. US, CA, GB)", text: $passportCountryCode)
-                .textInputAutocapitalization(.characters)
+                
                 .onSubmit {
                     savePassportCountry()
                 }
@@ -287,17 +286,18 @@ struct SettingsView: View {
     }
     
     private func presentShareSheet(for url: URL) {
-        // Create a share sheet using a UIViewControllerRepresentable
-        // For iOS 17+, we can use the built-in sharing
+#if os(iOS)
         let activityVC = UIActivityViewController(
             activityItems: [url],
             applicationActivities: nil
         )
-        
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let rootVC = windowScene.windows.first?.rootViewController {
             rootVC.present(activityVC, animated: true)
         }
+#else
+        NSWorkspace.shared.open(url)
+#endif
     }
     
     // MARK: - Data Import
