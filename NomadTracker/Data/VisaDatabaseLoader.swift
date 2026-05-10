@@ -78,8 +78,8 @@ class VisaDatabaseLoader {
             let countries = json?["countries"] as? [[String: Any]] ?? []
             
             return countries.compactMap { dict -> Country? in
-                guard let code = dict["code"] as? String,
-                      let name = dict["name"] as? String else { return nil }
+                guard let _ = dict["code"] as? String,
+                      let _ = dict["name"] as? String else { return nil }
                 
                 // Create model object
                 // This would use the Country model, not Core Data entity

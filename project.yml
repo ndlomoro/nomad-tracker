@@ -23,8 +23,7 @@ targets:
     resources:
       - NomadTracker/Resources/Assets.xcassets
       - NomadTracker/Resources/visa_database.json
-      - path: NomadTracker/Resources/NomadTracker.xcdatamodeld
-        type: folder
+      - NomadTracker/Resources/photos_import.json
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.andeslabs.nomadtracker

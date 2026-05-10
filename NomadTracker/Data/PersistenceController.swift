@@ -1,7 +1,7 @@
 /*
  PersistenceController - Core Data Stack
  Manages the persistent container, context, and background saves.
- */
+*/
 
 import CoreData
 import SwiftUI
@@ -16,7 +16,9 @@ class PersistenceController: ObservableObject {
     @Published var isReady = false
     
     init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "NomadTracker")
+        // Create model programmatically to avoid Xcode 26 model format issues
+        let model = Self.createModel()
+        container = NSPersistentContainer(name: "NomadTracker", managedObjectModel: model)
         let description = NSPersistentStoreDescription()
         
         if inMemory {
@@ -35,6 +37,7 @@ class PersistenceController: ObservableObject {
         Task {
             await load()
             await loadVisaDatabase()
+            await importBundledPhotosData()
             isReady = true
         }
     }
@@ -125,6 +128,36 @@ class PersistenceController: ObservableObject {
         }
     }
     
+    // MARK: - Auto-import bundled Photos data on first launch
+    func importBundledPhotosData() async {
+        guard let url = Bundle.main.url(forResource: "photos_import", withExtension: "json") else {
+            print("⚠️ photos_import.json not found in bundle")
+            return
+        }
+        
+        // Check if stays already exist
+        let request: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Stay")
+        request.fetchLimit = 1
+        do {
+            let count = try viewContext.count(for: request)
+            if count > 0 {
+                print("✅ Stays already exist (\(count) records) — skipping auto-import")
+                return
+            }
+        } catch {
+            print("❌ Error checking stays: \(error)")
+            return
+        }
+        
+        do {
+            let data = try Data(contentsOf: url)
+            let imported = await importStaysFromJSON(data: data)
+            print("✅ Auto-imported \(imported) stays from bundled Photos data")
+        } catch {
+            print("❌ Error auto-importing Photos data: \(error)")
+        }
+    }
+    
     // MARK: - Import from JSON (Photos data)
     func importStaysFromJSON(data: Data) async -> Int {
         do {
@@ -149,9 +182,14 @@ class PersistenceController: ObservableObject {
                 stay.exitDate = exitDate
                 stay.visaType = "tourist"
                 stay.createdAt = Date()
-                stay.daysSpent = 0
-                stay.daysRemaining = 90
                 stay.maxAllowedDays = 90
+                
+                // Calculate days from actual dates
+                let calendar = Calendar.current
+                let end = exitDate ?? Date()
+                let days = calendar.dateComponents([.day], from: entryDate, to: end).day ?? 0
+                stay.daysSpent = Int16(days)
+                stay.daysRemaining = Int16(max(0, 90 - days))
                 imported += 1
             }
             
@@ -163,6 +201,69 @@ class PersistenceController: ObservableObject {
             print("❌ Import error: \(error)")
             return 0
         }
+    }
+}
+
+// MARK: - Programmatic Model Creation
+extension PersistenceController {
+    static func createModel() -> NSManagedObjectModel {
+        let model = NSManagedObjectModel()
+        
+        // Stay Entity
+        let stayEntity = NSEntityDescription()
+        stayEntity.name = "Stay"
+        stayEntity.managedObjectClassName = "NomadTracker.StayManagedObject"
+        
+        let stayAttrs: [(String, NSAttributeType, Any?)] = [
+            ("id", .UUIDAttributeType, nil),
+            ("countryId", .stringAttributeType, nil),
+            ("countryName", .stringAttributeType, nil),
+            ("entryDate", .dateAttributeType, nil),
+            ("exitDate", .dateAttributeType, nil),
+            ("visaType", .stringAttributeType, "tourist"),
+            ("notes", .stringAttributeType, nil),
+            ("createdAt", .dateAttributeType, nil),
+            ("daysSpent", .integer16AttributeType, 0),
+            ("daysRemaining", .integer16AttributeType, 0),
+            ("maxAllowedDays", .integer16AttributeType, 90),
+        ]
+        
+        for (name, type, defaultVal) in stayAttrs {
+            let attr = NSAttributeDescription()
+            attr.name = name
+            attr.attributeType = type
+            attr.defaultValue = defaultVal
+            stayEntity.properties.append(attr)
+        }
+        
+        // Country Entity
+        let countryEntity = NSEntityDescription()
+        countryEntity.name = "Country"
+        countryEntity.managedObjectClassName = "NomadTracker.CountryManagedObject"
+        
+        let countryAttrs: [(String, NSAttributeType, Any?)] = [
+            ("id", .stringAttributeType, nil),
+            ("name", .stringAttributeType, nil),
+            ("region", .stringAttributeType, "Unknown"),
+            ("defaultStayDays", .integer16AttributeType, 90),
+            ("maxExtensionDays", .integer16AttributeType, 0),
+            ("ruleType", .stringAttributeType, "calendar_year"),
+            ("multipleEntry", .booleanAttributeType, true),
+            ("visaRequired", .booleanAttributeType, false),
+            ("schengen", .booleanAttributeType, false),
+            ("notes", .stringAttributeType, nil),
+        ]
+        
+        for (name, type, defaultVal) in countryAttrs {
+            let attr = NSAttributeDescription()
+            attr.name = name
+            attr.attributeType = type
+            attr.defaultValue = defaultVal
+            countryEntity.properties.append(attr)
+        }
+        
+        model.entities = [stayEntity, countryEntity]
+        return model
     }
 }
 

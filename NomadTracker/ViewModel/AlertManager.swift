@@ -12,6 +12,7 @@ class AlertManager: NSObject, ObservableObject {
     
     // MARK: - Request Permission
     func requestPermission() async -> Bool {
+#if os(iOS)
         do {
             return try await UNUserNotificationCenter.current().requestAuthorization(options: [
                 .badge, .sound, .alert
@@ -20,6 +21,12 @@ class AlertManager: NSObject, ObservableObject {
             print("❌ Alert permission denied: \(error)")
             return false
         }
+#else
+        // macOS: notifications work without explicit permission dialog
+        // Just set up the delegate
+        UNUserNotificationCenter.current().delegate = self
+        return true
+#endif
     }
     
     // MARK: - Schedule Alerts for All Active Stays

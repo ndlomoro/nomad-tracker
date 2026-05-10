@@ -7,6 +7,7 @@ import SwiftUI
 
 struct DashboardView: View {
     @EnvironmentObject var stayStore: StayStore
+    @Environment(\.colorScheme) var colorScheme
     
     private var year: Int {
         Calendar.current.component(.year, from: Date())
@@ -18,23 +19,32 @@ struct DashboardView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: 16) {
                 // Summary Header
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Active Stays").font(.headline)
-                        Text("\(activeStays.count) countries").foregroundStyle(.secondary)
+                        Text("Active Stays")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                        Text("\(activeStays.count) countries")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
                     }
                     
                     Spacer()
                     
                     VStack(alignment: .trailing) {
-                        Text("Year Summary").font(.headline)
+                        Text("Year Summary")
+                            .font(.title2)
+                            .fontWeight(.semibold)
                         let summary = stayStore.yearSummary(year: year)
-                        Text("\(summary.totalDays) days total").foregroundStyle(.secondary)
+                        Text("\(summary.totalDays) days total")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .padding(.horizontal)
+                .padding(.top, 8)
                 
                 // Country Cards
                 if activeStays.isEmpty {
@@ -51,7 +61,7 @@ struct DashboardView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 60)
                 } else {
-                    VStack(spacing: 12) {
+                    VStack(spacing: 10) {
                         ForEach(activeStays) { stay in
                             CountryCardView(stay: stay)
                         }
@@ -59,7 +69,7 @@ struct DashboardView: View {
                     .padding(.horizontal)
                 }
             }
-            .padding(.vertical)
+            .padding(.vertical, 8)
         }
     }
 }

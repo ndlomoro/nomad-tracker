@@ -57,7 +57,7 @@ struct HistoryView: View {
             .padding(.horizontal)
             .padding(.top, 8)
         }
-        .background(Color.nomadBackground)
+        .background(Color.white)
     }
     
     // MARK: - Year Summary Card

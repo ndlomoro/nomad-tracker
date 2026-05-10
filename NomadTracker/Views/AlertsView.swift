@@ -37,7 +37,7 @@ struct AlertsView: View {
             }
             .navigationTitle("Alerts")
             
-            .background(Color.nomadBackground)
+            .background(Color.white)
             .onAppear {
                 checkNotificationPermission()
             }

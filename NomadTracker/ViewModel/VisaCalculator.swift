@@ -92,7 +92,7 @@ class VisaCalculator {
         // Get all Schengen stays in the past 180 days
         let schengenStays = allStays.filter { stay in
             let entryDate = stay.entryDate
-            let exitDate = stay.exitDate ?? today
+            let _ = stay.exitDate ?? today
             let daysAgo = calendar.dateComponents([.day], from: entryDate, to: today).day ?? 0
             return daysAgo <= 180
         }

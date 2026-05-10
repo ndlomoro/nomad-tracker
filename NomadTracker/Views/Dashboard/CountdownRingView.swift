@@ -11,12 +11,17 @@ struct CountdownRingView: View {
     
     var body: some View {
         ZStack {
+            // Background ring
             Circle()
-                .stroke(Color.gray.opacity(0.2), lineWidth: 6)
+                .stroke(Color.gray.opacity(0.25), lineWidth: 5)
             
+            // Progress arc
             Circle()
                 .trim(from: 0, to: min(1, max(0, progress)))
-                .stroke(color, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                .stroke(
+                    color,
+                    style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                )
                 .rotationEffect(.degrees(-90))
                 .animation(.easeInOut(duration: 0.5), value: progress)
         }
@@ -25,5 +30,10 @@ struct CountdownRingView: View {
 }
 
 #Preview {
-    CountdownRingView(progress: 0.33, size: 80, color: .green)
+    HStack(spacing: 20) {
+        CountdownRingView(progress: 0.17, size: 80, color: .nomadGreen)
+        CountdownRingView(progress: 0.5, size: 80, color: .nomadOrange)
+        CountdownRingView(progress: 0.95, size: 80, color: .nomadRed)
+    }
+    .padding()
 }

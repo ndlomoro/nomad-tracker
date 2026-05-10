@@ -1,6 +1,5 @@
 /*
  Color Assets - Nomad Tracker Design System
- Add to Assets.xcassets/Colors/
  */
 
 import SwiftUI
@@ -12,7 +11,6 @@ extension Color {
     static let nomadOrange = Color(red: 0.95, green: 0.6, blue: 0.1)
     static let nomadRed = Color(red: 0.9, green: 0.2, blue: 0.2)
     static let nomadPurple = Color(red: 0.5, green: 0.3, blue: 0.8)
-    static let nomadBackground = Color(red: 0.97, green: 0.97, blue: 0.98)
 }
 
 // MARK: - Alert Colors
