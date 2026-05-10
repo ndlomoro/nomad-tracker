@@ -60,21 +60,15 @@ struct YearSummaryWidgetEntryView: View {
                     description: Text("No stays logged this year")
                 )
             } else {
-                ScrollView {
-                    VStack(spacing: 8) {
-                        ForEach(entry.countries) { country in
-                            YearCountryRow(country: country)
-                        }
+                VStack(spacing: 8) {
+                    ForEach(entry.countries.prefix(5)) { country in
+                        YearCountryRow(country: country)
                     }
                 }
             }
         }
         .padding()
-        .background {
-            Rectangle()
-                .fill(Color(.systemBackground))
-                .cornerRadius(16)
-        }
+        .containerBackground(.fill.tertiary, for: .widget)
     }
 }
 

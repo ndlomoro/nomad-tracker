@@ -30,18 +30,16 @@ struct YearSummaryWidgetView: View {
                     Spacer()
                 }
             } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(entry.countries.prefix(5), id: \.countryName) { country in
-                            VStack(spacing: 2) {
-                                Text(country.countryName)
-                                    .font(.caption2)
-                                    .lineLimit(1)
-                                Text("\(country.daysSpent)d")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .frame(width: 60)
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(entry.countries.prefix(4), id: \.countryName) { country in
+                        HStack {
+                            Text(country.countryName)
+                                .font(.caption2)
+                                .lineLimit(1)
+                            Spacer()
+                            Text("\(country.daysSpent)d")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
@@ -55,7 +53,6 @@ struct YearSummaryWidgetView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
         .containerBackground(.fill.tertiary, for: .widget)
     }
 }

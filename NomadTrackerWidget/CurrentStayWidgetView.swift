@@ -80,7 +80,6 @@ struct CurrentStayWidgetView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
         .containerBackground(.fill.tertiary, for: .widget)
     }
 }

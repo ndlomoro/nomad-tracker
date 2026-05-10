@@ -1,7 +1,7 @@
 # Nomad Tracker
 
 node_modules/
-*.xcodeproj/
+# xcodeproj is manually maintained (not generated) — track it
 *.xcworkspace/
 build/
 DerivedData/

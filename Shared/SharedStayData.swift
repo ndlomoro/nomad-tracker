@@ -104,71 +104,61 @@ struct SharedAlertConfig: Codable, Hashable {
     )
 }
 
-// MARK: - App Group Constants
+// MARK: - File-based shared storage (no App Group entitlement required)
 
-enum AppGroup {
-    static let suiteName = "group.com.andeslabs.nomadtracker"
-    
-    enum Keys {
-        static let stays = "shared_stays_data"
-        static let alertConfig = "shared_alert_config"
-        static let lastSyncDate = "shared_last_sync_date"
+enum FileStorage {
+    static var sharedDirectory: URL? {
+        FileManager.default
+            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
+            .first?
+            .appendingPathComponent("com.andeslabs.nomadtracker", isDirectory: true)
+    }
+
+    static func ensureDirectory() {
+        guard let dir = sharedDirectory else { return }
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
     }
 }
 
-// MARK: - Persistence Helpers
+// MARK: - SharedStayData file persistence
 
 extension SharedStayData {
-    static func saveToAppGroup(_ stays: [SharedStayData]) {
-        let defaults = UserDefaults(suiteName: AppGroup.suiteName)
-        guard let defaults else { return }
-        do {
-            let data = try JSONEncoder().encode(stays)
-            defaults.set(data, forKey: AppGroup.Keys.stays)
-            defaults.set(Date(), forKey: AppGroup.Keys.lastSyncDate)
-        } catch {
-            print("❌ Failed to save stays to app group: \(error)")
-        }
+    static func saveToFile(_ stays: [SharedStayData]) {
+        FileStorage.ensureDirectory()
+        guard let dir = FileStorage.sharedDirectory else { return }
+        let url = dir.appendingPathComponent("shared_stays.json")
+        guard let data = try? JSONEncoder().encode(stays) else { return }
+        try? data.write(to: url, options: .atomic)
     }
-    
-    static func loadFromAppGroup() -> [SharedStayData] {
-        let defaults = UserDefaults(suiteName: AppGroup.suiteName)
-        guard let defaults,
-              let data = defaults.data(forKey: AppGroup.Keys.stays) else {
-            return []
-        }
-        do {
-            return try JSONDecoder().decode([SharedStayData].self, from: data)
-        } catch {
-            print("❌ Failed to load stays from app group: \(error)")
-            return []
-        }
+
+    static func loadFromFile() -> [SharedStayData] {
+        guard let dir = FileStorage.sharedDirectory,
+              let data = try? Data(contentsOf: dir.appendingPathComponent("shared_stays.json")),
+              let stays = try? JSONDecoder().decode([SharedStayData].self, from: data)
+        else { return [] }
+        return stays
     }
 }
 
-extension SharedAlertConfig {
-    func saveToAppGroup() {
-        let defaults = UserDefaults(suiteName: AppGroup.suiteName)
-        guard let defaults else { return }
-        do {
-            let data = try JSONEncoder().encode(self)
-            defaults.set(data, forKey: AppGroup.Keys.alertConfig)
-        } catch {
-            print("❌ Failed to save alert config: \(error)")
-        }
+// MARK: - Year summary file persistence
+
+struct SharedYearSummaryData: Codable {
+    let year: Int
+    let countries: [SharedCountryYearData]
+
+    static func saveToFile(_ data: SharedYearSummaryData) {
+        FileStorage.ensureDirectory()
+        guard let dir = FileStorage.sharedDirectory else { return }
+        let url = dir.appendingPathComponent("year_summary.json")
+        guard let encoded = try? JSONEncoder().encode(data) else { return }
+        try? encoded.write(to: url, options: .atomic)
     }
-    
-    static func loadFromAppGroup() -> SharedAlertConfig {
-        let defaults = UserDefaults(suiteName: AppGroup.suiteName)
-        guard let defaults,
-              let data = defaults.data(forKey: AppGroup.Keys.alertConfig) else {
-            return .default
-        }
-        do {
-            return try JSONDecoder().decode(SharedAlertConfig.self, from: data)
-        } catch {
-            print("❌ Failed to load alert config: \(error)")
-            return .default
-        }
+
+    static func loadFromFile() -> SharedYearSummaryData? {
+        guard let dir = FileStorage.sharedDirectory,
+              let data = try? Data(contentsOf: dir.appendingPathComponent("year_summary.json")),
+              let summary = try? JSONDecoder().decode(SharedYearSummaryData.self, from: data)
+        else { return nil }
+        return summary
     }
 }

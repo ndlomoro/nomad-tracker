@@ -7,6 +7,7 @@ import Foundation
 import Combine
 import SwiftUI
 import CoreData
+import WidgetKit
 
 @MainActor
 class StayStore: ObservableObject {
@@ -312,18 +313,10 @@ class StayStore: ObservableObject {
         }
     }
 
-    // MARK: - App Group Sync (for widgets)
+    // MARK: - File-based sync (for widgets, no App Group entitlement required)
 
     private func syncToAppGroup() {
-        // Use the consistent AppGroup suite name from SharedStayData
-        guard let appGroupDefaults = UserDefaults(suiteName: AppGroup.suiteName) else {
-            return
-        }
-
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-
-        // Sync active stays via SharedStayData
+        // Write active stays to shared file
         let sharedStays = activeStays.map { stay -> SharedStayData in
             let country = availableCountries.first { $0.id == stay.countryId }
             let maxD = country?.totalMaxDays ?? 90
@@ -340,43 +333,16 @@ class StayStore: ObservableObject {
                 notes: stay.notes
             )
         }
+        SharedStayData.saveToFile(sharedStays)
 
-        SharedStayData.saveToAppGroup(sharedStays)
-
-        // Sync year summary for current year
+        // Write year summary to shared file
         let currentYear = Calendar.current.component(.year, from: Date())
         let summary = yearSummary(year: currentYear)
-        let summaryDict: [String: Any] = [
-            "year": currentYear,
-            "totalDays": summary.totalDays,
-            "countries": summary.countryDays.map { name, days in
-                ["countryName": name, "daysSpent": days]
-            }
-        ]
+        let sharedCountries = summary.countryDays.map { name, days in
+            SharedCountryYearData(id: UUID(), countryName: name, countryCode: "", daysSpent: days, maxDays: 90)
+        }.sorted { $0.daysSpent > $1.daysSpent }
+        SharedYearSummaryData.saveToFile(SharedYearSummaryData(year: currentYear, countries: sharedCountries))
 
-        if let data = try? JSONSerialization.data(withJSONObject: summaryDict) {
-            appGroupDefaults.set(data, forKey: "nomad_year_summary")
-        }
-
-        // Sync current stay for widget
-        if let currentStay = activeStays.first {
-            let country = availableCountries.first { $0.id == currentStay.countryId }
-            let currentStayDict: [String: Any] = [
-                "countryName": currentStay.countryName,
-                "countryCode": currentStay.countryId,
-                "daysSpent": currentStay.daysSpent,
-                "daysRemaining": currentStay.daysRemaining,
-                "maxDays": country?.totalMaxDays ?? 90,
-                "entryDate": currentStay.entryDate.timeIntervalSince1970,
-                "visaType": currentStay.visaType.rawValue,
-                "notes": currentStay.notes ?? "",
-                "isActive": true
-            ]
-            if let data = try? JSONSerialization.data(withJSONObject: currentStayDict) {
-                appGroupDefaults.set(data, forKey: "nomad_current_stay")
-            }
-        } else {
-            appGroupDefaults.removeObject(forKey: "nomad_current_stay")
-        }
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }

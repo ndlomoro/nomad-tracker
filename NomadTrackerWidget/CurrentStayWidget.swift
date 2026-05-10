@@ -68,11 +68,7 @@ struct CurrentStayWidgetEntryView: View {
             }
         }
         .padding()
-        .background {
-            Rectangle()
-                .fill(Color(.systemBackground))
-                .cornerRadius(16)
-        }
+        .containerBackground(.fill.tertiary, for: .widget)
     }
 }
 

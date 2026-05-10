@@ -35,32 +35,9 @@ struct YearSummaryWidgetProvider: TimelineProvider {
 
     private func loadYearSummary() -> YearSummaryWidgetEntry {
         let currentYear = Calendar.current.component(.year, from: Date())
-        let appGroupDefaults = UserDefaults(suiteName: AppGroup.suiteName)
-
-        guard let defaults = appGroupDefaults,
-              let data = defaults.data(forKey: "nomad_year_summary"),
-              let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+        guard let summary = SharedYearSummaryData.loadFromFile() else {
             return YearSummaryWidgetEntry(date: Date(), year: currentYear, countries: [])
         }
-
-        let year = dict["year"] as? Int ?? currentYear
-        let countriesArray = dict["countries"] as? [[String: Any]] ?? []
-
-        var countries: [SharedCountryYearData] = []
-        for item in countriesArray {
-            let name = item["countryName"] as? String ?? "Unknown"
-            let days = item["daysSpent"] as? Int ?? 0
-            countries.append(
-                SharedCountryYearData(
-                    id: UUID(),
-                    countryName: name,
-                    countryCode: "",
-                    daysSpent: days,
-                    maxDays: 90
-                )
-            )
-        }
-
-        return YearSummaryWidgetEntry(date: Date(), year: year, countries: countries)
+        return YearSummaryWidgetEntry(date: Date(), year: summary.year, countries: summary.countries)
     }
 }
