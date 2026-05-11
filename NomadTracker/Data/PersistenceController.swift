@@ -134,69 +134,103 @@ class PersistenceController: ObservableObject {
             print("⚠️ photos_import.json not found in bundle")
             return
         }
-        
-        // Check if stays already exist
-        let request: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Stay")
-        request.fetchLimit = 1
-        do {
-            let count = try viewContext.count(for: request)
+
+        // v2: fixed fractional-second date parsing + zero-duration filtering
+        let importVersionKey = "photosImportVersion"
+        let currentVersion = "v3"
+        let storedVersion = UserDefaults.standard.string(forKey: importVersionKey)
+
+        if storedVersion == currentVersion {
+            let checkRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Stay")
+            checkRequest.fetchLimit = 1
+            let count = (try? viewContext.count(for: checkRequest)) ?? 0
             if count > 0 {
                 print("✅ Stays already exist (\(count) records) — skipping auto-import")
                 return
             }
-        } catch {
-            print("❌ Error checking stays: \(error)")
-            return
+        } else {
+            // Clear any corrupted stays from a previous import run
+            let existing = (try? viewContext.fetch(StayManagedObject.fetchRequest())) ?? []
+            existing.forEach { viewContext.delete($0) }
+            if !existing.isEmpty { try? viewContext.save() }
+            print("🗑️ Cleared \(existing.count) corrupted stay records for re-import")
         }
-        
+
         do {
             let data = try Data(contentsOf: url)
             let imported = await importStaysFromJSON(data: data)
+            if imported > 0 {
+                UserDefaults.standard.set(currentVersion, forKey: importVersionKey)
+            }
             print("✅ Auto-imported \(imported) stays from bundled Photos data")
         } catch {
             print("❌ Error auto-importing Photos data: \(error)")
         }
     }
-    
+
     // MARK: - Import from JSON (Photos data)
     func importStaysFromJSON(data: Data) async -> Int {
+        func parseDate(_ str: String) -> Date? {
+            let withFractional = ISO8601DateFormatter()
+            withFractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let d = withFractional.date(from: str) { return d }
+            let plain = ISO8601DateFormatter()
+            plain.formatOptions = [.withInternetDateTime]
+            return plain.date(from: str)
+        }
+
         do {
             let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
             let stays = json?["stays"] as? [[String: Any]] ?? []
-            
+
+            let calendar = Calendar.current
             var imported = 0
             for stayDict in stays {
                 guard let code = stayDict["country_code"] as? String,
                       let name = stayDict["country_name"] as? String,
-                      let entryStr = stayDict["entry_date"] as? String else { continue }
-                
-                let entryDate = ISO8601DateFormatter().date(from: entryStr) ?? Date()
-                let exitDict = stayDict["exit_date"] as? String
-                let exitDate: Date? = exitDict != nil ? (ISO8601DateFormatter().date(from: exitDict!) ?? nil) : nil
-                
+                      let entryStr = stayDict["entry_date"] as? String,
+                      let entryDate = parseDate(entryStr) else { continue }
+
+                let exitDate: Date? = (stayDict["exit_date"] as? String).flatMap { parseDate($0) }
+
+                // Skip GPS-artifact stays with identical entry/exit timestamps
+                if let exit = exitDate, exit <= entryDate { continue }
+
+                // Auto-close stays that have no exit date but are well past their visa allowance.
+                // This handles photos-import entries where only the entry photo was captured.
+                let resolvedExit: Date?
+                if exitDate == nil {
+                    let daysSinceEntry = calendar.dateComponents([.day], from: entryDate, to: Date()).day ?? 0
+                    if daysSinceEntry > 90 {
+                        resolvedExit = calendar.date(byAdding: .day, value: 90, to: entryDate)
+                    } else {
+                        resolvedExit = nil
+                    }
+                } else {
+                    resolvedExit = exitDate
+                }
+
                 let stay = StayManagedObject(context: viewContext)
                 stay.id = UUID()
                 stay.countryId = code
                 stay.countryName = name
                 stay.entryDate = entryDate
-                stay.exitDate = exitDate
+                stay.exitDate = resolvedExit
                 stay.visaType = "tourist"
                 stay.createdAt = Date()
                 stay.maxAllowedDays = 90
-                
-                // Calculate days from actual dates
-                let calendar = Calendar.current
-                let end = exitDate ?? Date()
+
+                let end = resolvedExit ?? Date()
                 let days = calendar.dateComponents([.day], from: entryDate, to: end).day ?? 0
-                stay.daysSpent = Int16(days)
+                stay.daysSpent = Int16(max(0, days))
                 stay.daysRemaining = Int16(max(0, 90 - days))
                 imported += 1
             }
-            
+
             try viewContext.save()
             print("✅ Imported \(imported) stays from Photos data")
             return imported
-            
+
         } catch {
             print("❌ Import error: \(error)")
             return 0

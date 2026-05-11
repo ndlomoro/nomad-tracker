@@ -124,11 +124,11 @@ struct AlertConfig: Codable {
 
 Stored in `UserDefaults` under key `nomad_alert_config`.
 
-## Shared Data (App Group)
+## Shared Data (File-based)
 
 ### SharedStayData
 
-Struct for sharing stay data with widgets via `UserDefaults(suiteName: AppGroup.suiteName)`.
+Struct for sharing stay data with widgets. Written to a shared directory accessible by both the main app and the widget extension without App Group entitlements.
 
 ```swift
 struct SharedStayData: Codable {
@@ -139,13 +139,19 @@ struct SharedStayData: Codable {
     let daysRemaining: Int
     let maxDays: Int
     let entryDate: Date
-    let exitDate: Date?
+    let exitDate: Date?    // nil = isActive
     let visaType: String
     let notes: String?
 }
 ```
 
-**Sync Keys in App Group UserDefaults:**
-- `nomad_active_stays` — JSON array of active stays
-- `nomad_current_stay` — JSON dict of most recent active stay
-- `nomad_year_summary` — JSON dict of current year summary
+**Shared files** (written by `StayStore.syncToAppGroup()` after every mutation):
+
+| File | Contents |
+|------|----------|
+| `~/Library/Application Support/com.andeslabs.nomadtracker/shared_stays.json` | Active stays only |
+| `~/Library/Application Support/com.andeslabs.nomadtracker/year_summary.json` | Current-year country breakdown |
+
+`isActive` is a computed property (`exitDate == nil`) — it is not stored in the JSON.
+
+`daysSpent` in `Stay` (domain model) is also computed dynamically from `entryDate` to `exitDate ?? Date()`. The cached `daysSpent` on `StayManagedObject` is populated at import time only.
