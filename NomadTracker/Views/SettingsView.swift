@@ -1,6 +1,6 @@
 /*
  SettingsView - App settings including passport nationality selector,
- data export/import (JSON), reset data, and about section with version.
+ data export/import (JSON), photo import, reset data, and about section.
  */
 
 import SwiftUI
@@ -17,6 +17,8 @@ struct SettingsView: View {
     @State private var passportCountryCode: String = ""
     @State private var showExportAlert: Bool = false
     @State private var showImportPicker: Bool = false
+    @State private var showPhotoImport: Bool = false
+    @State private var photoImporting: Bool = false
     @State private var showResetConfirmation: Bool = false
     @State private var exportSuccess: Bool = false
     @State private var importSuccess: Bool = false
@@ -26,49 +28,62 @@ struct SettingsView: View {
     
     var body: some View {
         NavigationStack {
-            Form {
-                profileSection
-                dataManagementSection
-                privacySection
-                aboutSection
-            }
-            .navigationTitle("Settings")
-            .alert("Export Successful", isPresented: $exportSuccess) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("Your stay history has been exported successfully.")
-            }
-            .alert("Import Result", isPresented: $importSuccess) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("Your stay history has been imported successfully.")
-            }
-            .alert("Error", isPresented: .constant(errorMessage != nil)) {
-                Button("OK", role: .cancel) {
-                    errorMessage = nil
+            settingsForm
+                .alert("Reset All Data", isPresented: $showResetConfirmation) {
+                    Button("Reset", role: .destructive) {
+                        stayStore.resetAllData()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("This will permanently delete all your stay data. This action cannot be undone.")
                 }
-            } message: {
-                if let error = errorMessage {
-                    Text(error)
+                .alert("Import from Photos", isPresented: $showPhotoImport) {
+                    Button("Import") {
+                        importFromPhotos()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("This will analyze your photo library for GPS location data and auto-detect stays. Requires Photos access.")
                 }
-            }
-            .alert("Reset All Data", isPresented: $showResetConfirmation) {
-                Button("Reset", role: .destructive) {
-                    stayStore.resetAllData()
+                .fileImporter(
+                    isPresented: $showImportPicker,
+                    allowedContentTypes: [.json],
+                    allowsMultipleSelection: false
+                ) { result in
+                    handleFileImport(result)
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("This will permanently delete all your stay data. This action cannot be undone.")
+                .onAppear {
+                    loadPassportCountry()
+                }
+        }
+    }
+
+    // Split from `body` to keep each modifier chain small enough for the type-checker.
+    private var settingsForm: some View {
+        Form {
+            profileSection
+            dataManagementSection
+            privacySection
+            aboutSection
+        }
+        .navigationTitle("Settings")
+        .alert("Export Successful", isPresented: $exportSuccess) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Your stay history has been exported successfully.")
+        }
+        .alert("Import Result", isPresented: $importSuccess) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Your stay history has been imported successfully.")
+        }
+        .alert("Error", isPresented: .constant(errorMessage != nil)) {
+            Button("OK", role: .cancel) {
+                errorMessage = nil
             }
-            .fileImporter(
-                isPresented: $showImportPicker,
-                allowedContentTypes: [.json],
-                allowsMultipleSelection: false
-            ) { result in
-                handleFileImport(result)
-            }
-            .onAppear {
-                loadPassportCountry()
+        } message: {
+            if let error = errorMessage {
+                Text(error)
             }
         }
     }
@@ -104,11 +119,9 @@ struct SettingsView: View {
             .contentShape(Rectangle())
             .onTapGesture {
                 // In production, navigate to a country picker
-                // For now, use a simple text field
             }
             
             TextField("Country code (e.g. US, CA, GB)", text: $passportCountryCode)
-                
                 .onSubmit {
                     savePassportCountry()
                 }
@@ -163,6 +176,33 @@ struct SettingsView: View {
                 }
             }
             .buttonStyle(.plain)
+            
+            Button {
+                showPhotoImport = true
+            } label: {
+                HStack {
+                    Image(systemName: "photo.on.rectangle.angled")
+                        .foregroundStyle(.purple)
+                    
+                    VStack(alignment: .leading) {
+                        Text("Import from Photos")
+                            .font(.subheadline.bold())
+                        
+                        Text("Auto-detect stays from travel photo locations")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    if photoImporting {
+                        ProgressView()
+                            .scaleEffect(0.7)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(photoImporting)
             
             Button {
                 showResetConfirmation = true
@@ -261,25 +301,21 @@ struct SettingsView: View {
     // MARK: - Data Export
     
     private func exportData() {
+        // Sync widget data before exporting
+        stayStore.syncToAppGroup()
+        
         guard let jsonData = stayStore.exportStaysAsJSON() else {
             errorMessage = "Failed to export data."
             return
         }
         
-        // Save to a temporary file and share
         let tempDir = FileManager.default.temporaryDirectory
         let fileURL = tempDir.appendingPathComponent("nomad_tracker_export_\(dateStamp()).json")
         
         do {
             try jsonData.write(to: fileURL)
-            
-            // Use UIActivityViewController via coordinator
-            // For SwiftUI, we'll use a simpler approach with a success alert
             exportSuccess = true
-            
-            // Also try to share via share sheet if possible
             presentShareSheet(for: fileURL)
-            
         } catch {
             errorMessage = "Export failed: \(error.localizedDescription)"
         }
@@ -319,6 +355,34 @@ struct SettingsView: View {
             
         case .failure(let error):
             errorMessage = "Import failed: \(error.localizedDescription)"
+        }
+    }
+    
+    // MARK: - Photo Import
+    
+    private func importFromPhotos() {
+        photoImporting = true
+        Task {
+            do {
+                let stays = try await StayStore.importStaysFromPhotoLibrary()
+                if !stays.isEmpty {
+                    for stay in stays {
+                        stayStore.addStay(
+                            countryId: stay.countryId,
+                            countryName: stay.countryName,
+                            entryDate: stay.entryDate,
+                            visaType: stay.visaType,
+                            notes: stay.notes
+                        )
+                    }
+                    stayStore.syncToAppGroup()
+                } else {
+                    errorMessage = "No stays detected from your photos."
+                }
+            } catch {
+                errorMessage = "Photo import failed: \(error.localizedDescription)"
+            }
+            photoImporting = false
         }
     }
     

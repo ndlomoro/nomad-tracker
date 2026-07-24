@@ -20,10 +20,25 @@ struct Stay: Identifiable, Codable {
     }
     
     var daysSpent: Int {
-        let end = exitDate ?? Date()
-        let calendar = Calendar.current
-        return calendar.dateComponents([.day], from: entryDate, to: end).day ?? 0
+        Stay.elapsedDays(from: entryDate, to: exitDate ?? Date())
     }
+
+    // MARK: - Static Helpers
+
+    /// Calculate elapsed calendar days between two dates.
+    /// Uses start-of-day normalization to avoid fractional-day drift.
+    static func elapsedDays(from start: Date, to end: Date) -> Int {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: start)
+        let endOfDay = calendar.startOfDay(for: end)
+        let interval = endOfDay.timeIntervalSince(startOfDay)
+        return max(0, Int(interval / 86400))
+    }
+
+    static func elapsedDays(from start: Date) -> Int {
+        elapsedDays(from: start, to: Date())
+    }
+
     
     // Default max allowed days (90). Override via StayStore.maxAllowedDays(for:)
     // for country-specific values.

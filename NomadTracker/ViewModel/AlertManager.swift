@@ -31,13 +31,38 @@ class AlertManager: NSObject, ObservableObject {
     
     // MARK: - Schedule Alerts for All Active Stays
     func scheduleAllAlerts() {
+        scheduleAllAlerts(for: [])
+    }
+    
+    func scheduleAllAlerts(for stays: [Stay]) {
         UNUserNotificationCenter.current().delegate = self
         
         // Cancel existing alerts
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         
         // Schedule new alerts based on active stays
-        // This will be called from the ViewModel with actual stay data
+        for stay in stays {
+            let daysRemaining = stay.daysRemaining
+            let enabledThresholds = StayStore.defaultAlertThresholds
+            
+            for threshold in enabledThresholds where threshold <= daysRemaining && threshold > 0 {
+                scheduleAlert(
+                    for: stay.id.uuidString,
+                    countryName: stay.countryName,
+                    daysRemaining: daysRemaining,
+                    threshold: threshold
+                )
+                
+                activeAlerts.append(VisaAlert(
+                    id: UUID(),
+                    stayId: stay.id.uuidString,
+                    countryName: stay.countryName,
+                    threshold: threshold,
+                    triggered: false,
+                    scheduledDate: Date()
+                ))
+            }
+        }
     }
     
     // MARK: - Schedule Alert for Specific Stay

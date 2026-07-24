@@ -1,6 +1,5 @@
 /*
- DashboardView - Overview of current stays and visa status
- Uses StayStore (same as other views) for consistency.
+ DashboardView - Main dashboard showing active stays and year summary
  */
 
 import SwiftUI
@@ -8,6 +7,9 @@ import SwiftUI
 struct DashboardView: View {
     @EnvironmentObject var stayStore: StayStore
     @Environment(\.colorScheme) var colorScheme
+    @State private var showAddStay = false
+    @State private var showCountryDetail: Country? = nil
+    @State private var isRefreshing = false
     
     private var year: Int {
         Calendar.current.component(.year, from: Date())
@@ -64,6 +66,11 @@ struct DashboardView: View {
                     VStack(spacing: 10) {
                         ForEach(activeStays) { stay in
                             CountryCardView(stay: stay)
+                                .onTapGesture {
+                                    if let country = stayStore.availableCountries.first(where: { $0.id == stay.countryId }) {
+                                        showCountryDetail = country
+                                    }
+                                }
                         }
                     }
                     .padding(.horizontal)
@@ -71,6 +78,31 @@ struct DashboardView: View {
             }
             .padding(.vertical, 8)
         }
+        .refreshable {
+            await refreshData()
+        }
+        .navigationTitle("NomadTracker")
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Button(action: { showAddStay = true }) {
+                    Image(systemName: "plus")
+                        .font(.title2)
+                }
+            }
+        }
+        .sheet(isPresented: $showAddStay) {
+            AddStaySheet()
+        }
+        .sheet(item: $showCountryDetail) { country in
+            CountryDetailView(country: country, stayStore: stayStore)
+        }
+    }
+    
+    private func refreshData() async {
+        isRefreshing = true
+        try? await Task.sleep(nanoseconds: 500_000_000)
+        stayStore.syncToAppGroup()
+        isRefreshing = false
     }
 }
 

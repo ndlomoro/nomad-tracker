@@ -67,8 +67,38 @@ struct AddStayIntent: AppIntent {
     var visaType: VisaTypeIntent
 
     func perform() async -> ShowsAlertResult {
-        // In a real app, this would save to the database via AppGroup shared storage
-        // For now, just return success
+        // Save to shared file storage so widgets and main app can see it
+        let sharedStay = SharedStayData(
+            id: UUID(),
+            countryName: countryName,
+            countryCode: "",
+            entryDate: entryDate,
+            exitDate: nil,
+            visaType: visaType.rawValue,
+            notes: "",
+            isActive: true
+        )
+
+        // Load existing stays
+        var stays = SharedStayData.loadFromFile()
+
+        // Deactivate existing stays for same country
+        for i in 0..<stays.count {
+            if stays[i].countryName.lowercased() == countryName.lowercased() {
+                var updated = stays[i]
+                updated.isActive = false
+                stays[i] = updated
+            }
+        }
+
+        stays.append(sharedStay)
+
+        // Save back to file
+        SharedStayData.saveToFile(stays)
+
+        // Also sync year summary
+        StayStore.syncYearSummaryToFile()
+
         return .alert("Stay added for \(countryName)")
     }
 }

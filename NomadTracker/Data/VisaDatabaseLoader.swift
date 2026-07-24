@@ -77,14 +77,7 @@ class VisaDatabaseLoader {
             let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
             let countries = json?["countries"] as? [[String: Any]] ?? []
             
-            return countries.compactMap { dict -> Country? in
-                guard let _ = dict["code"] as? String,
-                      let _ = dict["name"] as? String else { return nil }
-                
-                // Create model object
-                // This would use the Country model, not Core Data entity
-                return nil  // Placeholder
-            }
+            return countries.compactMap { Country(from: $0) }
         } catch {
             print("❌ Error loading countries: \(error)")
             return []

@@ -26,7 +26,16 @@ struct Country: Identifiable, Codable, Hashable {
     var displayName: String {
         "\(name) (\(id))"
     }
-    
+
+    /// Regional-indicator flag emoji derived from the ISO 3166-1 alpha-2 `id`.
+    var flagEmoji: String {
+        let base: UInt32 = 0x1F1E6
+        return String(id.uppercased().unicodeScalars.compactMap { scalar -> Character? in
+            guard (0x41...0x5A).contains(scalar.value) else { return nil }
+            return Character(UnicodeScalar(base + scalar.value - 0x41)!)
+        })
+    }
+
     // MARK: - Rule Types
     enum RuleType: String, Codable {
         case calendarYear = "calendar_year"

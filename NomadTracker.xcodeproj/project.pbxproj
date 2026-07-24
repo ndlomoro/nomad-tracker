@@ -41,6 +41,9 @@
 		E46611BA06DE30EFB7DA65B2 /* StayManagedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C253EA4EFF42E13FF24FE6 /* StayManagedObject.swift */; };
 		F709B62292F62B46CC2DE1A2 /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = C215F0B0EAC2E8C26985103B /* Country.swift */; };
 		F98BDFDE4FEC181E5E842A17 /* CurrentStayWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D9E3529FFD8C1B9E55AA0C3 /* CurrentStayWidget.swift */; };
+		CDCDCDCDCDCDCDCDCDCDCD02 /* CountryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCDCDCDCDCDCDCDCDCDCD01 /* CountryDetailView.swift */; };
+		0B0B0B0B0B0B0B0B0B0B0B02 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0B0B0B0B0B0B0B0B0B0B01 /* OnboardingView.swift */; };
+		DBDBDBDBDBDBDBDBDBDBDB02 /* visa_database.json in Resources */ = {isa = PBXBuildFile; fileRef = DBDBDBDBDBDBDBDBDBDBDB01 /* visa_database.json */; };
 		F1A23456789ABCDEF0123456 /* NomadTrackerWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7F4466795B7A8F707665A3F8 /* NomadTrackerWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -102,6 +105,9 @@
 		C215F0B0EAC2E8C26985103B /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		C473118E2084B949379E1218 /* VisaCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisaCalculator.swift; sourceTree = "<group>"; };
 		C88C3535F048107BF0949402 /* YearSummaryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearSummaryWidget.swift; sourceTree = "<group>"; };
+		CDCDCDCDCDCDCDCDCDCDCD01 /* CountryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryDetailView.swift; sourceTree = "<group>"; };
+		0B0B0B0B0B0B0B0B0B0B0B01 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		DBDBDBDBDBDBDBDBDBDBDB01 /* visa_database.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = visa_database.json; sourceTree = "<group>"; };
 		E448833042E2AB44002AE921 /* NomadTrackerWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NomadTrackerWidgetBundle.swift; sourceTree = "<group>"; };
 		EBB0FE2B70A7A2AC27258D8E /* NomadTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NomadTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -183,6 +189,7 @@
 				4090A6A4E066CA6D16DEBA2E /* AlertsView.swift */,
 				04EB2F806A077A3402E69038 /* ContentView.swift */,
 				69B2DFC7597D2000FF01EF5F /* HistoryView.swift */,
+				0B0B0B0B0B0B0B0B0B0B0B01 /* OnboardingView.swift */,
 				502A2159794FB64C00F294AD /* SettingsView.swift */,
 				6D78734D9047591718FE78DD /* StayTrackerView.swift */,
 				C530F60A50E08E008C94AABF /* Dashboard */,
@@ -221,6 +228,7 @@
 			children = (
 				421A38D6752178A7837E04F9 /* CountdownRingView.swift */,
 				75A9288EAC4A4C384162B67F /* CountryCardView.swift */,
+				CDCDCDCDCDCDCDCDCDCDCD01 /* CountryDetailView.swift */,
 				189424ED6AC55A5918B4ACC9 /* DashboardView.swift */,
 			);
 			path = Dashboard;
@@ -240,6 +248,7 @@
 				821D1741AFDAE055A9BF2E53 /* Assets.xcassets */,
 				52C160A74EA0C883BF9E4555 /* Colors.swift */,
 				3C1E9E72C7CFB206FAD34616 /* photos_import.json */,
+				DBDBDBDBDBDBDBDBDBDBDB01 /* visa_database.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -356,6 +365,7 @@
 			files = (
 				3C5CC9186D9988C3DC3003E1 /* Assets.xcassets in Resources */,
 				543E8415ED258F5D847BE1D2 /* photos_import.json in Resources */,
+				DBDBDBDBDBDBDBDBDBDBDB02 /* visa_database.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,9 +416,11 @@
 				77681633DFDC7EEF24C7E905 /* CountdownRingView.swift in Sources */,
 				F709B62292F62B46CC2DE1A2 /* Country.swift in Sources */,
 				5E9E357454F0F82B426BDFAF /* CountryCardView.swift in Sources */,
+				CDCDCDCDCDCDCDCDCDCDCD02 /* CountryDetailView.swift in Sources */,
 				E06D1A5C91A0A0F9F288C062 /* CountryManagedObject.swift in Sources */,
 				0B64BB528B225DE27FC7B36A /* DashboardView.swift in Sources */,
 				6D5D52FF848105A3AAF824FC /* HistoryView.swift in Sources */,
+				0B0B0B0B0B0B0B0B0B0B0B02 /* OnboardingView.swift in Sources */,
 				923614B09087521C714A68F5 /* NomadTrackerApp.swift in Sources */,
 				849A3EF83860B72B7204FB74 /* PersistenceController.swift in Sources */,
 				30BF8413CAAB2E60B4C16AD4 /* SettingsView.swift in Sources */,

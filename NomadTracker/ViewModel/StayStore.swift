@@ -8,6 +8,8 @@ import Combine
 import SwiftUI
 import CoreData
 import WidgetKit
+import Photos
+import CoreLocation
 
 @MainActor
 class StayStore: ObservableObject {
@@ -94,8 +96,9 @@ class StayStore: ObservableObject {
         managed.notes = notes
         managed.createdAt = Date()
         managed.daysSpent = 0
-        managed.daysRemaining = 90
-        managed.maxAllowedDays = 90
+        let maxD = maxAllowedDays(for: countryId)
+        managed.daysRemaining = Int16(maxD)
+        managed.maxAllowedDays = Int16(maxD)
 
         do {
             try context.save()
@@ -114,6 +117,10 @@ class StayStore: ObservableObject {
         do {
             if let managed = try persistenceController.container.viewContext.fetch(request).first {
                 managed.exitDate = exitDate
+                // Recalculate daysSpent with correct elapsed-day logic
+                let days = Stay.elapsedDays(from: managed.entryDate, to: exitDate)
+                managed.daysSpent = Int16(max(0, days))
+                managed.daysRemaining = Int16(max(0, Int(managed.maxAllowedDays) - days))
                 try persistenceController.container.viewContext.save()
                 syncToAppGroup()
             }
@@ -233,6 +240,7 @@ class StayStore: ObservableObject {
     }
 
     let availableThresholds: [Int] = [30, 15, 7, 3, 1]
+    static let defaultAlertThresholds: [Int] = [30, 15, 7, 3, 1]
 
     private func saveAlertConfig() {
         let encoder = JSONEncoder()
@@ -284,9 +292,11 @@ class StayStore: ObservableObject {
             managed.visaType = stay.visaType.rawValue
             managed.notes = stay.notes
             managed.createdAt = stay.createdAt
-            managed.daysSpent = 0
-            managed.daysRemaining = 90
-            managed.maxAllowedDays = 90
+            // Use country-specific max days from visa database
+            let maxD = maxAllowedDays(for: stay.countryId)
+            managed.daysSpent = Int16(Stay.elapsedDays(from: stay.entryDate, to: stay.exitDate ?? Date()))
+            managed.daysRemaining = Int16(max(0, maxD - Int(managed.daysSpent)))
+            managed.maxAllowedDays = Int16(maxD)
         }
 
         do {
@@ -299,6 +309,89 @@ class StayStore: ObservableObject {
         }
     }
 
+    // MARK: - Photo Import
+    
+    static func importStaysFromPhotoLibrary() async throws -> [Stay] {
+        // Request photo library access
+        let authorized = await withCheckedContinuation { continuation in
+            PHPhotoLibrary.requestAuthorization { status in
+                continuation.resume(returning: status == .authorized || status == .limited)
+            }
+        }
+        
+        guard authorized else {
+            throw NSError(domain: "PhotoLibrary", code: -1, userInfo: [NSLocalizedDescriptionKey: "Photo library access denied"])
+        }
+        
+        // Query photos with location data
+        let options = PHFetchOptions()
+        options.predicate = NSPredicate(format: "location != nil")
+        let assets = PHAsset.fetchAssets(with: options)
+        
+        var staysByCountry: [String: (entryDate: Date, exitDate: Date)] = [:]
+        
+        // enumerateObjects' closure is synchronous, so collect the assets first,
+        // then do the async reverse-geocoding in a normal async loop.
+        var collectedAssets: [PHAsset] = []
+        assets.enumerateObjects { asset, _, _ in
+            collectedAssets.append(asset)
+        }
+
+        for asset in collectedAssets {
+            guard let location = asset.location else { continue }
+            guard let creationDate = asset.creationDate else { continue }
+
+            // Reverse geocode to get country
+            let country = await reverseGeocodeToCountry(
+                latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude
+            )
+            guard let country = country, !country.isEmpty else { continue }
+
+            if var existing = staysByCountry[country] {
+                existing.entryDate = min(existing.entryDate, creationDate)
+                existing.exitDate = max(existing.exitDate, creationDate)
+                staysByCountry[country] = existing
+            } else {
+                staysByCountry[country] = (creationDate, creationDate)
+            }
+        }
+        
+        // Convert to Stay objects
+        var stays: [Stay] = []
+        for (countryName, dates) in staysByCountry {
+            let stay = Stay(
+                id: UUID(),
+                countryId: "",
+                countryName: countryName,
+                entryDate: dates.entryDate,
+                exitDate: dates.exitDate,
+                visaType: .tourist,
+                notes: "Imported from Photos",
+                createdAt: Date()
+            )
+            stays.append(stay)
+        }
+        
+        return stays
+    }
+    
+    private static func reverseGeocodeToCountry(latitude: Double, longitude: Double) async -> String? {
+        return await withCheckedContinuation { continuation in
+            CLGeocoder().reverseGeocodeLocation(
+                CLLocation(latitude: latitude, longitude: longitude)
+            ) { placemarks, _ in
+                if let placemark = placemarks?.first {
+                    continuation.resume(with: .success(placemark.country ?? ""))
+                } else {
+                    continuation.resume(with: .success(nil))
+                }
+            }
+        }
+    }
+    
+    // MARK: - Reset Data
+    
     func resetAllData() {
         let context = persistenceController.container.viewContext
         let request: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Stay")
@@ -315,7 +408,7 @@ class StayStore: ObservableObject {
 
     // MARK: - File-based sync (for widgets, no App Group entitlement required)
 
-    private func syncToAppGroup() {
+    func syncToAppGroup() {
         // Write active stays to shared file
         let sharedStays = activeStays.map { stay -> SharedStayData in
             let country = availableCountries.first { $0.id == stay.countryId }
@@ -339,7 +432,9 @@ class StayStore: ObservableObject {
         let currentYear = Calendar.current.component(.year, from: Date())
         let summary = yearSummary(year: currentYear)
         let sharedCountries = summary.countryDays.map { name, days in
-            SharedCountryYearData(id: UUID(), countryName: name, countryCode: "", daysSpent: days, maxDays: 90)
+            let code = availableCountries.first { $0.name == name }?.id ?? ""
+            let maxD = availableCountries.first { $0.name == name }?.totalMaxDays ?? 90
+            return SharedCountryYearData(id: UUID(), countryName: name, countryCode: code, daysSpent: days, maxDays: maxD)
         }.sorted { $0.daysSpent > $1.daysSpent }
         SharedYearSummaryData.saveToFile(SharedYearSummaryData(year: currentYear, countries: sharedCountries))
 

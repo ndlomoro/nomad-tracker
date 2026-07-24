@@ -137,7 +137,7 @@ class PersistenceController: ObservableObject {
 
         // v2: fixed fractional-second date parsing + zero-duration filtering
         let importVersionKey = "photosImportVersion"
-        let currentVersion = "v3"
+        let currentVersion = "v4"
         let storedVersion = UserDefaults.standard.string(forKey: importVersionKey)
 
         if storedVersion == currentVersion {
@@ -179,11 +179,25 @@ class PersistenceController: ObservableObject {
             return plain.date(from: str)
         }
 
+        // Load country visa limits from Core Data (populated by loadVisaDatabase)
+        func maxDaysForCountry(_ code: String) -> Int16 {
+            let request: NSFetchRequest<CountryManagedObject> = CountryManagedObject.fetchRequest()
+            request.predicate = NSPredicate(format: "id == %@", code)
+            request.fetchLimit = 1
+            do {
+                if let country = try viewContext.fetch(request).first {
+                    return country.defaultStayDays + country.maxExtensionDays
+                }
+            } catch {
+                print("⚠️ Could not look up country \(code): \(error)")
+            }
+            return 90  // fallback
+        }
+
         do {
             let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
             let stays = json?["stays"] as? [[String: Any]] ?? []
 
-            let calendar = Calendar.current
             var imported = 0
             for stayDict in stays {
                 guard let code = stayDict["country_code"] as? String,
@@ -196,13 +210,16 @@ class PersistenceController: ObservableObject {
                 // Skip GPS-artifact stays with identical entry/exit timestamps
                 if let exit = exitDate, exit <= entryDate { continue }
 
+                // Look up country-specific visa limit
+                let maxAllowed = maxDaysForCountry(code)
+
                 // Auto-close stays that have no exit date but are well past their visa allowance.
                 // This handles photos-import entries where only the entry photo was captured.
                 let resolvedExit: Date?
                 if exitDate == nil {
-                    let daysSinceEntry = calendar.dateComponents([.day], from: entryDate, to: Date()).day ?? 0
-                    if daysSinceEntry > 90 {
-                        resolvedExit = calendar.date(byAdding: .day, value: 90, to: entryDate)
+                    let daysSinceEntry = Stay.elapsedDays(from: entryDate)
+                    if daysSinceEntry > Int(maxAllowed) {
+                        resolvedExit = Calendar.current.date(byAdding: .day, value: Int(maxAllowed), to: entryDate)
                     } else {
                         resolvedExit = nil
                     }
@@ -218,12 +235,13 @@ class PersistenceController: ObservableObject {
                 stay.exitDate = resolvedExit
                 stay.visaType = "tourist"
                 stay.createdAt = Date()
-                stay.maxAllowedDays = 90
+                stay.maxAllowedDays = maxAllowed
 
+                // Use correct elapsed-day calculation (TimeInterval-based, not dateComponents)
                 let end = resolvedExit ?? Date()
-                let days = calendar.dateComponents([.day], from: entryDate, to: end).day ?? 0
+                let days = Stay.elapsedDays(from: entryDate, to: end)
                 stay.daysSpent = Int16(max(0, days))
-                stay.daysRemaining = Int16(max(0, 90 - days))
+                stay.daysRemaining = Int16(max(0, Int(maxAllowed) - days))
                 imported += 1
             }
 

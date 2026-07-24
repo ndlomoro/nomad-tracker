@@ -1,6 +1,6 @@
 /*
- CountryCardView - Displays visa status for a single country stay
- Dark mode compatible with proper contrast.
+ CountryCardView - Displays an active stay with countdown ring
+ Features: tap feedback, haptic feedback, smooth animations, status indicators
  */
 
 import SwiftUI
@@ -8,125 +8,150 @@ import SwiftUI
 struct CountryCardView: View {
     let stay: Stay
     
-    var countryFlag: String {
-        let code = stay.countryId.uppercased()
-        guard code.count == 2,
-              let c1 = code.unicodeScalars.first,
-              let c2 = code.unicodeScalars.last else {
-            return "🏳️"
+    @EnvironmentObject var stayStore: StayStore
+    @State private var isPressed = false
+    @State private var showDetail = false
+    
+    private var status: StayStatus {
+        stayStore.stayStatus(for: stay)
+    }
+    
+    private var country: Country? {
+        stayStore.availableCountries.first { $0.id == stay.countryId }
+    }
+    
+    private var progress: Double {
+        let maxD = country?.totalMaxDays ?? stay.maxAllowedDays
+        return min(1.0, Double(stay.daysSpent) / Double(maxD))
+    }
+    
+    private var ringColor: Color {
+        switch status {
+        case .safe, .active: return .nomadGreen
+        case .warning: return .nomadOrange
+        case .critical, .expired: return .nomadRed
         }
-        let offset = UInt32(c1.value) - 0x41 + 0x1F1E6
-        let offset2 = UInt32(c2.value) - 0x41 + 0x1F1E6
-        return String(UnicodeScalar(offset)!) + String(UnicodeScalar(offset2)!)
     }
     
-    var daysRemaining: Int {
-        stay.daysRemaining
-    }
-    
-    var progress: Double {
-        let spent = stay.daysSpent
-        let maxDays = stay.maxAllowedDays
-        return min(1.0, max(0, Double(spent) / Double(maxDays)))
-    }
-    
-    var statusColor: Color {
-        if daysRemaining <= 3 { return .nomadRed }
-        if daysRemaining <= 15 { return .nomadOrange }
-        return .nomadGreen
+    private var flagEmoji: String {
+        country?.flagEmoji ?? ""
     }
     
     var body: some View {
-        HStack(spacing: 14) {
-            // Flag
-            Text(countryFlag)
-                .font(.system(size: 36))
-            
-            // Info
-            VStack(alignment: .leading, spacing: 4) {
-                Text(stay.countryName)
-                    .font(.headline)
+        Button(action: {
+            #if os(iOS)
+            // Haptic feedback
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.impactOccurred()
+            #endif
+
+            // Navigate to detail
+            showDetail = true
+        }) {
+            HStack(spacing: 16) {
+                // Countdown Ring
+                CountdownRingView(
+                    progress: progress,
+                    daysRemaining: stay.daysRemaining,
+                    maxDays: country?.totalMaxDays ?? stay.maxAllowedDays,
+                    color: ringColor
+                )
+                .scaleEffect(isPressed ? 0.95 : 1.0)
+                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
                 
-                Text("\(stay.daysSpent) days spent · \(daysRemaining) remaining")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                // Info
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 6) {
+                        Text(flagEmoji)
+                            .font(.title2)
+                        Text(stay.countryName)
+                            .font(.headline)
+                        if stay.isActive {
+                            Text("Active")
+                                .font(.caption)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.nomadGreen.opacity(0.2))
+                                .cornerRadius(4)
+                        }
+                    }
+                    
+                    Text(status.message)
+                        .font(.subheadline)
+                        .foregroundStyle(ringColor)
+                        .fontWeight(.medium)
+                    
+                    Text("Entered \(stay.entryDate.formatted(date: .abbreviated, time: .omitted))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    if let notes = stay.notes, !notes.isEmpty {
+                        Text(notes)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
                 
-                Text(stay.visaType.displayName)
+                Spacer()
+                
+                // Chevron indicator
+                Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.secondary)
             }
-            
-            Spacer()
-            
-            // Progress Ring
-            CountdownRingView(
-                progress: progress,
-                size: 56,
-                color: statusColor
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.appBackground)
+                    .shadow(
+                        color: ringColor.opacity(isPressed ? 0.15 : 0.08),
+                        radius: isPressed ? 12 : 8,
+                        x: 0,
+                        y: isPressed ? 4 : 2
+                    )
             )
-            .overlay(
-                Text("\(daysRemaining)")
-                    .font(.caption2)
-                    .fontWeight(.bold)
-                    .foregroundStyle(statusColor)
-            )
+            .scaleEffect(isPressed ? 0.98 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
         }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color.black.opacity(0.05))
-                .shadow(color: .black.opacity(0.06), radius: 3, x: 0, y: 1)
+        .buttonStyle(PlainButtonStyle())
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isPressed = true }
+                .onEnded { _ in isPressed = false }
         )
+        .sheet(isPresented: $showDetail) {
+            if let country {
+                CountryDetailView(country: country, stayStore: stayStore)
+            }
+        }
     }
 }
 
 #Preview {
-    VStack(spacing: 12) {
-        CountryCardView(stay: PreviewHelpers.sampleStay)
-        CountryCardView(stay: PreviewHelpers.criticalStay)
-        CountryCardView(stay: PreviewHelpers.expiredStay)
+    VStack(spacing: 16) {
+        CountryCardView(stay: Stay(
+            id: UUID(),
+            countryId: "MX",
+            countryName: "Mexico",
+            entryDate: Date().addingTimeInterval(-86400 * 45),
+            exitDate: nil,
+            visaType: .tourist,
+            notes: "Working remotely from Playa del Carmen",
+            createdAt: Date()
+        ))
+        
+        CountryCardView(stay: Stay(
+            id: UUID(),
+            countryId: "ES",
+            countryName: "Spain",
+            entryDate: Date().addingTimeInterval(-86400 * 75),
+            exitDate: nil,
+            visaType: .tourist,
+            notes: nil,
+            createdAt: Date()
+        ))
     }
+    .environmentObject(StayStore())
     .padding()
-}
-
-// MARK: - Preview Helpers
-enum PreviewHelpers {
-    static var sampleStay: Stay {
-        Stay(
-            id: UUID(),
-            countryId: "FR",
-            countryName: "France",
-            entryDate: Calendar.current.date(byAdding: .day, value: -15, to: Date())!,
-            exitDate: nil,
-            visaType: .tourist,
-            notes: nil,
-            createdAt: Date()
-        )
-    }
-    
-    static var criticalStay: Stay {
-        Stay(
-            id: UUID(),
-            countryId: "CO",
-            countryName: "Colombia",
-            entryDate: Calendar.current.date(byAdding: .day, value: -87, to: Date())!,
-            exitDate: nil,
-            visaType: .tourist,
-            notes: nil,
-            createdAt: Date()
-        )
-    }
-    
-    static var expiredStay: Stay {
-        Stay(
-            id: UUID(),
-            countryId: "DE",
-            countryName: "Germany",
-            entryDate: Calendar.current.date(byAdding: .day, value: -95, to: Date())!,
-            exitDate: nil,
-            visaType: .tourist,
-            notes: nil,
-            createdAt: Date()
-        )
-    }
 }
